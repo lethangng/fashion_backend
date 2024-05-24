@@ -130,4 +130,9 @@ class BrandController extends Controller
 
         return view('admin.brand.index', compact('brands', 'search'))->with('i', (request()->input('page', 1) - 1) * 10);
     }
+
+    public static function getBrandById($id)
+    {
+        return Brand::findOrFail($id);
+    }
 }

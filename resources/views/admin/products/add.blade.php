@@ -348,7 +348,7 @@
                     contentType: false,
                     success: function(response) {
                         console.log(response);
-                        // window.location.href = window.location.href;
+                        window.location.href = {{ route('product.index') }};
                     },
                     error: function(e) {
                         console.log('Lỗi ' + e.responseText);

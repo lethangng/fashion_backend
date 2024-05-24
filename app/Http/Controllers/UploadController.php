@@ -13,10 +13,10 @@ class UploadController extends Controller
         $this->storage = app('firebase.storage');
     }
 
-    public function index($name)
+    public function getImage($name)
     {
         $expiresAt = new \DateTime('tomorrow');
-        $imageReference = $this->storage->getBucket()->object("images/" + $name);
+        $imageReference = $this->storage->getBucket()->object($name);
 
         if ($imageReference->exists()) {
             $image_url = $imageReference->signedUrl($expiresAt);

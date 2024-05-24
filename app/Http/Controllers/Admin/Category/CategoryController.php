@@ -130,4 +130,9 @@ class CategoryController extends Controller
 
         return view('admin.category.index', compact('categories', 'search'))->with('i', (request()->input('page', 1) - 1) * 10);
     }
+
+    public static function getCategoryById($id)
+    {
+        return Category::findOrFail($id);
+    }
 }

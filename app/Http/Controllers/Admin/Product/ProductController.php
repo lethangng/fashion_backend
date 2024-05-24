@@ -7,20 +7,38 @@ use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Product;
 use App\Models\Category;
+use App\Models\ProductPrice;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UploadController;
-use App\Models\ProductPrice;
+use App\Http\Controllers\Admin\Brand\BrandController;
+use App\Http\Controllers\Admin\Category\CategoryController;
 
 class ProductController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index($page = 1)
     {
-        //
+        $products = Product::latest()->paginate(10, ['id', 'name', 'category_id', 'brand_id', 'image'], 'page', $page);
+        $products = $products->map(function ($product) {
+            // $category = (new CategoryController())->getCategoryById($product->category_id);
+            $categoryName = CategoryController::getCategoryById($product->category_id)->name;
+            $brandName = BrandController::getBrandById($product->category_id)->name;
+            $imageUrl = (new UploadController())->getImage($product->image);
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'price' => $product->price,
+                'category_name' => $categoryName,
+                'brand_name' => $brandName,
+                'image_url' => $imageUrl,
+            ];
+        });
+        // dd($products);
+        return view('admin.products.index', compact('products'))->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
     /**
@@ -104,7 +122,10 @@ class ProductController extends Controller
                 $product_price->price_off = $price_off;
                 $product_price->sell_off = $sell_off;
                 $product_price->save();
+
+                toastr()->success('Thêm sản phẩm thành công!');
             } catch (\Exception $e) {
+                toastr()->error('Thêm sản phẩm thất bại.');
                 return response()->json([
                     'res' => 'error',
                     'mes' => '',
@@ -144,5 +165,15 @@ class ProductController extends Controller
     public function destroy(string $id)
     {
         //
+    }
+
+    public function search(Request $request)
+    {
+
+        $search = trim($request->search);
+        $search = preg_replace('/\s+/', ' ', $search);
+        $categories = Product::where('name', 'like', '%' . $search . '%')->paginate(10);
+
+        return view('admin.products.index', compact('products', 'search'))->with('i', (request()->input('page', 1) - 1) * 10);
     }
 }

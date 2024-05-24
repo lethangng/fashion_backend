@@ -92,13 +92,13 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     // Products
     Route::prefix('/product')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('product.index');
-        Route::get('/add', [ProductController::class, 'create'])->name('product.add');
+        Route::get('/page/{page}', [ProductController::class, 'index'])->name('product.index');
+        Route::get('/add', [ProductController::class, 'create'])->name('product.create');
         Route::post('/add', [ProductController::class, 'store']);
-        // Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('category.edit');
-        // Route::post('/edit/{id}', [CategoryController::class, 'update']);
-        // Route::post('/delete', [CategoryController::class, 'destroy'])->name('category.delete');
-        // Route::get('/search', [CategoryController::class, 'search'])->name('category.search');
+        Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
+        Route::post('/edit/{id}', [ProductController::class, 'update']);
+        Route::post('/delete', [ProductController::class, 'destroy'])->name('product.delete');
+        Route::get('/search', [ProductController::class, 'search'])->name('product.search');
     });
 });
 
