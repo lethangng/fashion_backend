@@ -12,11 +12,13 @@ use Illuminate\Validation\ValidationException;
 
 class CategoryController extends Controller
 {
-    public function index(): View
+    public function index($page = 1): View
     {
-        $categories = Category::latest()->paginate(10);
+        $categories = Category::latest()->paginate(20, ['*'], 'page', $page);
+        $total_pages = $categories->lastPage();
+        $current_page = $categories->currentPage();
 
-        return view('admin.category.index', compact('categories'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('admin.category.index', compact('categories', 'total_pages', 'current_page'));
     }
 
     public function create(): View

@@ -1,5 +1,86 @@
 @extends('admin.master')
 @section('title', 'Quản lý Thương hiệu')
+@section('script')
+    <script>
+        $(document).ready(function() {
+            var selectedItems = [];
+            var isDelete = false;
+
+            function handleCheck() {
+                if (selectedItems.length > 0 && isDelete == false) {
+                    $('#btn-delete').removeClass('d-none');
+                    isDelete = true;
+                } else if (selectedItems.length == 0) {
+                    $('#btn-delete').addClass('d-none');
+                    isDelete = false;
+                }
+            }
+            // console.log(window.location.href);
+
+            function handleDelete() {
+                if (selectedItems.length > 0) {
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'POST',
+                        data: {
+                            _token: @json(csrf_token()),
+                            id: selectedItems
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            window.location.href = window.location.href;
+                        },
+                        error: function(e) {
+                            console.log('Lỗi ' + e.responseText);
+                        }
+                    });
+                }
+            }
+
+            $('#select-all').click(function() {
+                var isChecked = $(this).prop('checked');
+                $('.checkbox').prop('checked', isChecked);
+
+                if (isChecked) {
+                    $('.checkbox').each(function() {
+                        var value = $(this).val();
+                        if (!selectedItems.includes(value)) {
+                            selectedItems.push(value);
+                        }
+                    });
+                } else {
+                    selectedItems = [];
+                }
+
+                console.log(selectedItems);
+                handleCheck();
+            });
+
+            $('.checkbox').click(function() {
+                var isAllChecked = $('.checkbox:not(:checked)').length === 0;
+                $('#select-all').prop('checked', isAllChecked);
+
+                var isChecked = $(this).prop('checked');
+                var value = $(this).val();
+                if (isChecked && !selectedItems.includes(value)) {
+                    selectedItems.push(value);
+                } else if (!isChecked) {
+                    var index = selectedItems.indexOf(value);
+                    if (index !== -1) {
+                        selectedItems.splice(index, 1);
+                    }
+                }
+                console.log(selectedItems);
+                handleCheck();
+            });
+
+            $('#btn-submit-delete').on('click', function(e) {
+                e.preventDefault();
+                handleDelete();
+            });
+        });
+    </script>
+@endsection
 
 @section('main-content')
     <div class="main-content">
@@ -105,7 +186,7 @@
                                                     </div>
                                                 </th>
                                                 {{-- <th class="align-middle">#</th> --}}
-                                                <th class="align-middle">STT</th>
+                                                {{-- <th class="align-middle">STT</th> --}}
                                                 <th class="align-middle">Tên thương hiệu</th>
                                                 <th class="align-middle">Mô tả</th>
                                                 <th class="text-center">Sửa</th>
@@ -124,7 +205,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>{{ ++$i }}</td>
+                                                    {{-- <td>{{ ++$i }}</td> --}}
                                                     <td>
                                                         {{ $brand->name }}
                                                     </td>
@@ -188,117 +269,42 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                {!! $brands->links() !!}
+
                                 <!-- end table-responsive -->
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="pagination pagination-rounded justify-content-center mt-1 mb-4 pb-1">
+                            @for ($i = 1; $i < $total_pages + 1; $i++)
+                                <li @class(['page-item', 'disabled' => $current_page == 1])>
+                                    <a href="{{ route('brand.index', ['page' => 1]) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-left"></i>
+                                    </a>
+                                </li>
 
+                                <li @class(['page-item', 'active' => $i == $current_page])>
+                                    <a href="{{ route('brand.index', ['page' => $i]) }}"
+                                        class="page-link">{{ $i }}</a>
+                                </li>
+
+                                <li @class(['page-item', 'disabled' => $current_page == $total_pages])>
+                                    <a href="{{ route('brand.index', ['page' => $i + 1]) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endfor
+                        </ul>
+                    </div>
+                </div>
                 <!-- end row -->
 
             </div> <!-- container-fluid -->
         </div>
         <!-- End Page-content -->
-
-
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <script>
-                            document.write(new Date().getFullYear())
-                        </script> © Fashion.
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="text-sm-end d-none d-sm-block">
-                            Design & Develop by Le Ngoc Thang
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
     </div>
 
-
-    <script>
-        $(document).ready(function() {
-            var selectedItems = [];
-            var isDelete = false;
-
-            function handleCheck() {
-                if (selectedItems.length > 0 && isDelete == false) {
-                    $('#btn-delete').removeClass('d-none');
-                    isDelete = true;
-                } else if (selectedItems.length == 0) {
-                    $('#btn-delete').addClass('d-none');
-                    isDelete = false;
-                }
-            }
-            // console.log(window.location.href);
-
-            function handleDelete() {
-                if (selectedItems.length > 0) {
-                    $.ajax({
-                        url: window.location.href,
-                        type: 'POST',
-                        data: {
-                            _token: @json(csrf_token()),
-                            id: selectedItems
-                        },
-                        success: function(response) {
-                            console.log(response);
-                            window.location.href = window.location.href;
-                        },
-                        error: function(e) {
-                            console.log('Lỗi ' + e.responseText);
-                        }
-                    });
-                }
-            }
-
-            $('#select-all').click(function() {
-                var isChecked = $(this).prop('checked');
-                $('.checkbox').prop('checked', isChecked);
-
-                if (isChecked) {
-                    $('.checkbox').each(function() {
-                        var value = $(this).val();
-                        if (!selectedItems.includes(value)) {
-                            selectedItems.push(value);
-                        }
-                    });
-                } else {
-                    selectedItems = [];
-                }
-
-                console.log(selectedItems);
-                handleCheck();
-            });
-
-            $('.checkbox').click(function() {
-                var isAllChecked = $('.checkbox:not(:checked)').length === 0;
-                $('#select-all').prop('checked', isAllChecked);
-
-                var isChecked = $(this).prop('checked');
-                var value = $(this).val();
-                if (isChecked && !selectedItems.includes(value)) {
-                    selectedItems.push(value);
-                } else if (!isChecked) {
-                    var index = selectedItems.indexOf(value);
-                    if (index !== -1) {
-                        selectedItems.splice(index, 1);
-                    }
-                }
-                console.log(selectedItems);
-                handleCheck();
-            });
-
-            $('#btn-submit-delete').on('click', function(e) {
-                e.preventDefault();
-                handleDelete();
-            });
-        });
-    </script>
 @endsection

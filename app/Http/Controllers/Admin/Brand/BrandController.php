@@ -12,11 +12,13 @@ use Illuminate\Validation\ValidationException;
 
 class BrandController extends Controller
 {
-    public function index(): View
+    public function index($page = 1): View
     {
-        $brands = Brand::latest()->paginate(10);
+        $brands = Brand::latest()->paginate(20, ['*'], 'page', $page);
+        $total_pages = $brands->lastPage();
+        $current_page = $brands->currentPage();
 
-        return view('admin.brand.index', compact('brands'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('admin.brand.index', compact('brands', 'total_pages', 'current_page'));
     }
 
     public function create(): View

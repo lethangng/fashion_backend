@@ -2,8 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Str;
-
 class UploadController extends Controller
 {
     private $storage;
@@ -30,17 +28,19 @@ class UploadController extends Controller
     public function upload($file, $path)
     {
         $extension = $file->getClientOriginalExtension();
-        $name = Str::before($file->getClientOriginalName(), '.') . '-' . time();
+        $name = 'fashion-image' . '-' . time();
         $file_name = $path . $name . '.' . $extension;
 
-        $storageRef = $this->storage->getBucket()->upload(file_get_contents($file), ['name' => $file_name]);
+        $this->storage->getBucket()->upload(file_get_contents($file), ['name' => $file_name]);
+        // $storageRef = $this->storage->getBucket()->upload(file_get_contents($file), ['name' => $file_name]);
         // $fileInfo = $storageRef->info();
         return $file_name;
     }
 
     public function destroy($name)
     {
-        $imageDeleted = $this->storage->getBucket()->object("images/" + $name)->delete();
+        $this->storage->getBucket()->object("images/" + $name)->delete();
+        // $imageDeleted = $this->storage->getBucket()->object("images/" + $name)->delete();
         return back()->withInput();
     }
 }

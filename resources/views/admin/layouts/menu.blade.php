@@ -26,7 +26,7 @@
                         <span key="t-ecommerce">Quản lý sản phẩm</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('product.index') }}" key="t-products">Sản phẩm</a></li>
+                        <li><a href="{{ route('product.index', 1) }}" key="t-products">Sản phẩm</a></li>
                         <li><a href="{{ route('product.create') }}" key="t-product-detail">Thêm sản phẩm</a></li>
                     </ul>
                 </li>

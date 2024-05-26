@@ -12,11 +12,13 @@ use Illuminate\Validation\ValidationException;
 
 class ColorController extends Controller
 {
-    public function index(): View
+    public function index($page = 1): View
     {
-        $colors = Color::latest()->paginate(10);
+        $colors = Color::latest()->paginate(20, ['*'], 'page', $page);
+        $total_pages = $colors->lastPage();
+        $current_page = $colors->currentPage();
 
-        return view('admin.colors.index', compact('colors'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('admin.colors.index', compact('colors', 'total_pages', 'current_page'));
     }
 
     public function create(): View

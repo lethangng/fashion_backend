@@ -128,6 +128,7 @@
                                                 <div class="col-sm-6">
                                                     <button type="submit"
                                                         class="btn btn-primary waves-effect waves-light w-xs">
+                                                        <i class="fas fa-search"></i>
                                                         Tìm kiếm
                                                     </button>
                                                 </div>
@@ -182,7 +183,6 @@
                                         </div>
 
                                     </div>
-
                                 </div>
                                 <div class="table-responsive">
                                     <table class="table align-middle table-nowrap mb-0 table-hover table-data">
@@ -191,15 +191,15 @@
                                                 <th style="width: 20px;">
                                                     <div class="form-check font-size-16 align-middle">
                                                         <input class="form-check-input" type="checkbox" id="select-all">
-                                                        {{-- <label class="form-check-label" for="transactionCheck01"></label> --}}
+
                                                     </div>
                                                 </th>
-                                                {{-- <th class="align-middle">#</th> --}}
-                                                <th class="align-middle">STT</th>
+
                                                 <th class="align-middle">Hình ảnh</th>
                                                 <th class="align-middle">Tên sản phẩm</th>
                                                 <th class="align-middle">Danh mục</th>
-                                                <th class="align-middle">Thương hiệu</th>
+                                                <th class="align-middle">Giá nhập</th>
+                                                <th class="text-center">Quản lý giá</th>
                                                 <th class="text-center">Sửa</th>
                                                 <th class="text-center">Xóa</th>
                                             </tr>
@@ -211,12 +211,8 @@
                                                         <div class="form-check font-size-16">
                                                             <input class="form-check-input checkbox" type="checkbox"
                                                                 id="{{ $product['id'] }}" value="{{ $product['id'] }}">
-                                                            {{-- <label class="form-check-label"
-                                                                for="transactionCheck02"></label> --}}
                                                         </div>
                                                     </td>
-
-                                                    <td>{{ ++$i }}</td>
                                                     <td>
                                                         <img src="{{ $product['image_url'] }}" alt="Hình ảnh sản phẩm">
 
@@ -228,8 +224,15 @@
                                                         {{ $product['category_name'] }}
                                                     </td>
                                                     <td>
-                                                        {{ $product['brand_name'] }}
+                                                        {{ $product['import_price'] }}
                                                     </td>
+                                                    <td class="text-center">
+                                                        <a class="btn btn-info btn-sm"
+                                                            href="{{ route('product_price.index', ['product_id' => $product['id'], 'page' => 1]) }}">
+                                                            <i class="mdi mdi-clipboard-flow-outline"></i>
+                                                        </a>
+                                                    </td>
+
                                                     <form action="{{ route('product.delete') }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{ $product['id'] }}">
@@ -287,13 +290,35 @@
                                         </tbody>
                                     </table>
                                 </div>
-
                                 <!-- end table-responsive -->
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="pagination pagination-rounded justify-content-center mt-1 mb-4 pb-1">
+                            @for ($i = 1; $i < $total_pages + 1; $i++)
+                                <li @class(['page-item', 'disabled' => $current_page == 1])>
+                                    <a href="{{ route('product.index', $i - 1) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                <li @class(['page-item', 'active' => $i == $current_page])>
+                                    <a href="{{ route('product.index', $i) }}" class="page-link">{{ $i }}</a>
+                                </li>
+
+                                <li @class(['page-item', 'disabled' => $current_page == $total_pages])>
+                                    <a href="{{ route('product.index', $i + 1) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endfor
+                        </ul>
+                    </div>
+                </div>
 
                 <!-- end row -->
 
@@ -301,22 +326,5 @@
         </div>
         <!-- End Page-content -->
 
-
-        <footer class="footer">
-            <div class="container-fluid">
-                <div class="row">
-                    <div class="col-sm-6">
-                        <script>
-                            document.write(new Date().getFullYear())
-                        </script> © Fashion.
-                    </div>
-                    <div class="col-sm-6">
-                        <div class="text-sm-end d-none d-sm-block">
-                            Design & Develop by Le Ngoc Thang
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </footer>
     </div>
 @endsection

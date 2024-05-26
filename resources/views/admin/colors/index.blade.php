@@ -185,7 +185,7 @@
                                                         <input class="form-check-input" type="checkbox" id="select-all">
                                                     </div>
                                                 </th>
-                                                <th class="align-middle">STT</th>
+                                                {{-- <th class="align-middle">STT</th> --}}
                                                 <th class="align-middle">Tên màu sắc</th>
                                                 <th class="align-middle">Màu sắc</th>
                                                 <th class="align-middle">Mô tả</th>
@@ -204,7 +204,7 @@
                                                         </div>
                                                     </td>
 
-                                                    <td>{{ ++$i }}</td>
+                                                    {{-- <td>{{ ++$i }}</td> --}}
                                                     <td>
                                                         {{ $color->name }}
                                                     </td>
@@ -271,10 +271,34 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                {!! $colors->links() !!}
+
                                 <!-- end table-responsive -->
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="pagination pagination-rounded justify-content-center mt-1 mb-4 pb-1">
+                            @for ($i = 1; $i < $total_pages + 1; $i++)
+                                <li @class(['page-item', 'disabled' => $current_page == 1])>
+                                    <a href="{{ route('color.index', $i - 1) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                <li @class(['page-item', 'active' => $i == $current_page])>
+                                    <a href="{{ route('color.index', $i) }}" class="page-link">{{ $i }}</a>
+                                </li>
+
+                                <li @class(['page-item', 'disabled' => $current_page == $total_pages])>
+                                    <a href="{{ route('color.index', $i + 1) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endfor
+                        </ul>
                     </div>
                 </div>
                 <!-- end row -->

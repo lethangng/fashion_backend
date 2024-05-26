@@ -268,10 +268,34 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                {!! $sizes->links() !!}
+
                                 <!-- end table-responsive -->
                             </div>
                         </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="pagination pagination-rounded justify-content-center mt-1 mb-4 pb-1">
+                            @for ($i = 1; $i < $total_pages + 1; $i++)
+                                <li @class(['page-item', 'disabled' => $current_page == 1])>
+                                    <a href="{{ route('size.index', $i - 1) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                <li @class(['page-item', 'active' => $i == $current_page])>
+                                    <a href="{{ route('size.index', $i) }}" class="page-link">{{ $i }}</a>
+                                </li>
+
+                                <li @class(['page-item', 'disabled' => $current_page == $total_pages])>
+                                    <a href="{{ route('size.index', $i + 1) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endfor
+                        </ul>
                     </div>
                 </div>
                 <!-- end row -->

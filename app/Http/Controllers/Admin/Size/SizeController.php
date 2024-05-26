@@ -12,11 +12,13 @@ use Illuminate\Validation\ValidationException;
 
 class SizeController extends Controller
 {
-    public function index(): View
+    public function index($page = 1): View
     {
-        $sizes = Size::latest()->paginate(10);
+        $sizes = Size::latest()->paginate(20, ['*'], 'page', $page);
+        $total_pages = $sizes->lastPage();
+        $current_page = $sizes->currentPage();
 
-        return view('admin.sizes.index', compact('sizes'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('admin.sizes.index', compact('sizes', 'total_pages', 'current_page'));
     }
 
     public function create(): View

@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Danh mục')
+@section('title', 'Quản lý giá')
 
 @section('script')
     <script>
@@ -93,7 +93,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Danh mục</h4>
+                            <h4 class="mb-sm-0 font-size-18">Quản lý giá</h4>
                         </div>
                     </div>
                 </div>
@@ -106,8 +106,8 @@
                                 <div class="col-sm-12">
                                     <div class="row hidden-xs">
                                         <!-- App Search-->
-                                        <form class="d-none d-lg-block col-sm-6" action="{{ route('category.search') }}"
-                                            method="GET">
+                                        <form class="d-none d-lg-block col-sm-6"
+                                            action="{{ route('product_price.search') }}" method="GET">
                                             <div class="row">
                                                 <div class="app-search col-sm-6">
                                                     <div class="position-relative">
@@ -120,6 +120,7 @@
                                                 <div class="col-sm-6">
                                                     <button type="submit"
                                                         class="btn btn-primary waves-effect waves-light w-xs">
+                                                        <i class="fas fa-search"></i>
                                                         Tìm kiếm
                                                     </button>
                                                 </div>
@@ -138,7 +139,7 @@
                                                     </span>
                                                 </button>
 
-                                                <a href="{{ route('category.create') }}"
+                                                <a href="{{ route('product_price.create') }}"
                                                     class=" btn btn-success waves-effect waves-light w-xs">
                                                     <i class="bx bx-add-to-queue"></i>
                                                     Thêm
@@ -183,59 +184,62 @@
                                                 <th style="width: 20px;">
                                                     <div class="form-check font-size-16 align-middle">
                                                         <input class="form-check-input" type="checkbox" id="select-all">
-                                                        {{-- <label class="form-check-label" for="transactionCheck01"></label> --}}
+
                                                     </div>
                                                 </th>
-                                                {{-- <th class="align-middle">#</th> --}}
-                                                {{-- <th class="align-middle">STT</th> --}}
-                                                <th class="align-middle">Tên danh mục</th>
-                                                <th class="align-middle">Mô tả</th>
+
+                                                <th class="align-middle">Giá bán</th>
+                                                <th class="align-middle">Giá niêm yết</th>
+                                                <th class="align-middle">Tiết kiệm</th>
                                                 <th class="text-center">Sửa</th>
                                                 <th class="text-center">Xóa</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($categories as $category)
+                                            @foreach ($product_prices as $product_price)
                                                 <tr>
                                                     <td>
                                                         <div class="form-check font-size-16">
                                                             <input class="form-check-input checkbox" type="checkbox"
-                                                                id="{{ $category->id }}" value="{{ $category->id }}">
-                                                            {{-- <label class="form-check-label"
-                                                                for="transactionCheck02"></label> --}}
+                                                                id="{{ $product_price->id }}"
+                                                                value="{{ $product_price->id }}">
                                                         </div>
                                                     </td>
 
-                                                    {{-- <td>{{ ++$i }}</td> --}}
                                                     <td>
-                                                        {{ $category->name }}
+                                                        {{ $product_price->price }}
                                                     </td>
                                                     <td>
-                                                        {{ $category->description }}
+                                                        {{ $product_price->price_off }}
                                                     </td>
-                                                    <form action="{{ route('category.delete') }}" method="POST">
+                                                    <td>
+                                                        {{ $product_price->sell_off }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a class="btn btn-warning btn-sm"
+                                                            href="{{ route('product_price.edit', $product_price->id) }}">
+                                                            <i class="fas fa-pencil-alt">
+                                                            </i>
+                                                        </a>
+                                                    </td>
+                                                    <form action="{{ route('product_price.delete') }}" method="POST">
                                                         @csrf
-                                                        <input type="hidden" name="id" value="{{ $category->id }}">
-                                                        <td class="text-center">
-                                                            <a class="btn btn-warning btn-sm"
-                                                                href="{{ route('category.edit', $category->id) }}">
-                                                                <i class="fas fa-pencil-alt">
-                                                                </i>
-                                                            </a>
-                                                        </td>
+                                                        <input type="hidden" name="id"
+                                                            value="{{ $product_price->id }}">
+
                                                         <td class="text-center">
                                                             <button type="button" class="btn btn-danger btn-sm"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#exampleModal{{ $category->id }}"
+                                                                data-bs-target="#exampleModal{{ $product_price->id }}"
                                                                 data-bs-whatever="@mdo">
 
                                                                 <span class="icon-status node-delete-53">
                                                                     <i class="fas fa-trash"></i>
                                                                 </span>
                                                             </button>
-                                                            <div class="modal fade" id="exampleModal{{ $category->id }}"
-                                                                tabindex="-1" aria-labelledby="exampleModalLabel"
-                                                                aria-hidden="true">
+                                                            <div class="modal fade"
+                                                                id="exampleModal{{ $product_price->id }}" tabindex="-1"
+                                                                aria-labelledby="exampleModalLabel" aria-hidden="true">
                                                                 <div class="modal-dialog">
                                                                     <div class="modal-content">
                                                                         <div class="modal-header">
@@ -270,40 +274,40 @@
                                         </tbody>
                                     </table>
                                 </div>
-
                                 <!-- end table-responsive -->
                             </div>
                         </div>
                     </div>
                 </div>
+
                 <div class="row">
                     <div class="col-lg-12">
                         <ul class="pagination pagination-rounded justify-content-center mt-1 mb-4 pb-1">
                             @for ($i = 1; $i < $total_pages + 1; $i++)
                                 <li @class(['page-item', 'disabled' => $current_page == 1])>
-                                    <a href="{{ route('category.index', $i - 1) }}" class="page-link"><i
-                                            class="mdi mdi-chevron-left"></i>
+                                    <a href="{{ route('product_price.index', ['product_id' => $product_price->product_id, 'page' => 1]) }}"
+                                        class="page-link"><i class="mdi mdi-chevron-left"></i>
                                     </a>
                                 </li>
 
                                 <li @class(['page-item', 'active' => $i == $current_page])>
-                                    <a href="{{ route('category.index', $i) }}"
+                                    <a href="{{ route('product_price.index', ['product_id' => $product_price->product_id, 'page' => $i]) }}"
                                         class="page-link">{{ $i }}</a>
                                 </li>
 
                                 <li @class(['page-item', 'disabled' => $current_page == $total_pages])>
-                                    <a href="{{ route('category.index', $i + 1) }}" class="page-link"><i
-                                            class="mdi mdi-chevron-right"></i>
+                                    <a href="{{ route('product_price.index', ['product_id' => $product_price->product_id, 'page' => $i + 1]) }}"
+                                        class="page-link"><i class="mdi mdi-chevron-right"></i>
                                     </a>
                                 </li>
                             @endfor
                         </ul>
                     </div>
                 </div>
-
                 <!-- end row -->
 
-            </div> <!-- container-fluid -->
+            </div>
+            <!-- container-fluid -->
         </div>
         <!-- End Page-content -->
 

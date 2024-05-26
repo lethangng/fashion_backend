@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Thêm sản phẩm')
+@section('title', 'Sửa sản phẩm')
 
 @section('css')
     <link href="{{ asset('assets') }}/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
@@ -23,6 +23,10 @@
             max-width: 80%;
             margin: 20px auto;
         }
+
+        .dz-size {
+            display: none;
+        }
     </style>
 @endsection
 
@@ -40,6 +44,7 @@
 
     <script>
         Dropzone.autoDiscover = false;
+
         var dropzoneImage = new Dropzone("#form-image", {
             autoProcessQueue: false,
             uploadMultiple: false,
@@ -50,6 +55,26 @@
             clickable: true,
             addRemoveLinks: true,
             acceptedFiles: 'image/*',
+            dictRemoveFile: 'Xóa',
+            dictMaxFilesExceeded: 'Vui lòng chỉ chọn 1 hình ảnh.',
+            dictFileTooBig: 'Vui lòng chọn hình ảnh dưới 1 MB',
+
+            init: function() {
+                var imageUrl = "{{ $image_url }}";
+                imageUrl = imageUrl.replaceAll('amp;', '');
+                var mockFile = {
+                    name: 'Image',
+                    size: 1024,
+                    // type: 'image/*',
+                    // accepted: true // required if using 'MaxFiles' option
+                };
+                this.files.push(mockFile); // add to files array
+                this.emit("addedfile", mockFile);
+                this.emit("thumbnail", mockFile,
+                    imageUrl
+                );
+                this.emit("complete", mockFile);
+            }
         });
 
         var dropzoneListImages = new Dropzone("#form-list-image", {
@@ -62,6 +87,32 @@
             clickable: true,
             addRemoveLinks: true,
             acceptedFiles: 'image/*',
+            dictRemoveFile: 'Xóa',
+            dictMaxFilesExceeded: 'Vui lòng chỉ chọn 1 hình ảnh.',
+            dictFileTooBig: 'Vui lòng chọn hình ảnh dưới 1 MB',
+
+            init: function() {
+                var list_image_url = "{{ $list_image_url }}";
+                list_image_url = JSON.parse(list_image_url.replace(/&quot;/g, '"'));
+                list_image_url = list_image_url.map((item) => item.replaceAll('amp;', ''));
+
+                // console.log(list_image_url);
+                var mockFile = {
+                    name: 'Image',
+                    size: 1024,
+                    // type: 'image/*',
+                    accepted: true // required if using 'MaxFiles' option
+                };
+                list_image_url.forEach(item => {
+                    this.files.push(mockFile); // add to files array
+                    this.emit("addedfile", mockFile);
+                    this.emit("thumbnail", mockFile,
+                        item
+                    );
+                    this.emit("complete", mockFile);
+                });
+
+            }
         });
     </script>
     <script>
@@ -242,6 +293,8 @@
         }).then(editor => {
             myEditor = editor;
         });
+
+        // myEditor.setData("<div>ok day</div>");
     </script>
 
     <script>
@@ -325,10 +378,6 @@
                         selector: 'input[name="price"]'
                     },
                     {
-                        name: 'import_price',
-                        selector: 'input[name="import_price"]'
-                    },
-                    {
                         name: 'price_off',
                         selector: 'input[name="price_off"]'
                     },
@@ -374,7 +423,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Thêm sản phẩm</h4>
+                            <h4 class="mb-sm-0 font-size-18">Sửa sản phẩm</h4>
                         </div>
                     </div>
                 </div>
@@ -390,7 +439,7 @@
                                     <label for="example-text-input" class="col-md-2 col-form-label">Tên sản phẩm</label>
                                     <div class="col-md-10">
                                         <input class="form-control" type="text" placeholder="Nhập tên sản phẩm..."
-                                            id="example-text-input" name="name" value="{{ old('name') }}">
+                                            id="example-text-input" name="name" value="{{ $product->name }}">
                                     </div>
                                 </div>
 
@@ -399,7 +448,8 @@
                                     <div class="col-md-4">
                                         <select class="form-control select2" name="category_id">
                                             @foreach ($categories as $category)
-                                                <option value="{{ $category->id }}">{{ $category->name }}</option>
+                                                <option value="{{ $category->id }}" @selected($product->category_id == $category->id)>
+                                                    {{ $category->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -410,7 +460,8 @@
                                     <div class="col-md-4">
                                         <select class="form-control select2" name="brand_id">
                                             @foreach ($brands as $brand)
-                                                <option value="{{ $brand->id }}">{{ $brand->name }}</option>
+                                                <option value="{{ $brand->id }}" @selected($product->brand_id == $brand->id)>
+                                                    {{ $brand->name }}</option>
                                             @endforeach
                                         </select>
                                     </div>
@@ -420,32 +471,8 @@
                                     <label for="example-text-input" class="col-md-2 col-form-label">Giá nhập</label>
                                     <div class="col-md-4">
                                         <input class="form-control" type="text" placeholder="Nhập giá nhập..."
-                                            id="example-text-input" name="import_price" value="{{ old('import_price') }}">
-                                    </div>
-                                </div>
-
-                                <div class="mb-3 row">
-                                    <label for="example-text-input" class="col-md-2 col-form-label">Giá bán</label>
-                                    <div class="col-md-4">
-                                        <input class="form-control" type="text" placeholder="Nhập giá bán..."
-                                            id="example-text-input" name="price" value="{{ old('price') }}">
-                                    </div>
-                                </div>
-
-                                <div class="mb-3 row">
-                                    <label for="example-text-input" class="col-md-2 col-form-label">Giá niêm yết</label>
-                                    <div class="col-md-4">
-                                        <input class="form-control" type="text" placeholder="Nhập giá niêm yết..."
-                                            id="example-text-input" name="price_off" value="{{ old('price_off') }}">
-                                    </div>
-                                </div>
-
-                                <div class="mb-3 row">
-                                    <label for="example-text-input" class="col-md-2 col-form-label">Tiết kiệm</label>
-                                    <div class="col-md-4">
-                                        <input class="form-control" type="text" placeholder="Nhập tiết kiệm..."
-                                            id="example-text-input" name="sell_off" value="{{ old('sell_off') }}">
-
+                                            id="example-text-input" name="import_price"
+                                            value="{{ $product->import_price }}">
                                     </div>
                                 </div>
 
@@ -453,8 +480,10 @@
                                     <label for="example-search-input" class="col-md-2 col-form-label">Tình trạng</label>
                                     <div class="col-md-4">
                                         <select class="form-control select2" name="status">
-                                            <option value="0">Còn hàng</option>
-                                            <option value="1">Hết hàng</option>
+                                            <option value="0" @selected($product->status == 0)>Còn hàng
+                                            </option>
+                                            <option value="1" @selected($product->status == 1)>Hết hàng
+                                            </option>
                                         </select>
                                     </div>
                                 </div>
@@ -466,7 +495,7 @@
                                             <div class="col-12">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="newest"
-                                                        id="formCheckNew">
+                                                        id="formCheckNew" @checked($product->newest == 1)>
                                                 </div>
                                             </div>
                                         </div>
@@ -477,14 +506,16 @@
                                     <label for="example-search-input" class="col-md-2 col-form-label">Kích cỡ</label>
                                     <div class="col-md-10">
                                         <div class="row row-cols-lg-auto g-3 align-items-center">
+                                            @php
+                                                $sizeValue = json_decode($product->sizes);
+                                            @endphp
                                             @foreach ($sizes as $size)
                                                 <div class="col-12">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox" name="size"
-                                                            value="{{ $size->id }}"
-                                                            id="formCheck{{ $size->id }}">
-                                                        <label class="form-check-label"
-                                                            for="formCheck{{ $size->id }}">
+                                                            value="{{ $size->id }}" id="formCheck{{ $size->id }}"
+                                                            @checked(in_array($size->id, $sizeValue))>
+                                                        <label class="form-check-label" for="formCheck{{ $size->id }}">
                                                             {{ $size->size }}
                                                         </label>
                                                     </div>
@@ -498,11 +529,14 @@
                                     <label for="example-search-input" class="col-md-2 col-form-label">Màu sắc</label>
                                     <div class="col-md-10">
                                         <div class="row row-cols-lg-auto g-3 align-items-center">
+                                            @php
+                                                $colorValue = json_decode($product->colors);
+                                            @endphp
                                             @foreach ($colors as $color)
                                                 <div class="col-12">
                                                     <div class="form-check">
                                                         <input class="form-check-input" type="checkbox" name="color"
-                                                            value="{{ $color->id }}"
+                                                            value="{{ $color->id }}" @checked(in_array($color->id, $colorValue))
                                                             id="formCheckColor{{ $color->id }}">
 
                                                         <label class="form-check-label"
@@ -520,8 +554,6 @@
                                         </div>
                                     </div>
                                 </div>
-
-
                             </div>
                         </div>
                     </div>
@@ -587,6 +619,7 @@
                                 <div class="row">
                                     <div id="container" class="col-md-12 mb-3">
                                         <textarea name="description" id="editor">
+                                            {{ $product->description }}
                                         </textarea>
                                     </div>
                                 </div>

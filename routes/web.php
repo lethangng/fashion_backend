@@ -2,13 +2,14 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Admin\Size\SizeController;
 use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Admin\Brand\BrandController;
+use App\Http\Controllers\Admin\Color\ColorController;
 use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Category\CategoryController;
-use App\Http\Controllers\Admin\Color\ColorController;
 use App\Http\Controllers\Admin\Dashboard\DashboardController;
-use App\Http\Controllers\Admin\Size\SizeController;
+use App\Http\Controllers\Admin\Product\ProductPriceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,7 +39,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     // Category
     Route::prefix('/category')->group(function () {
-        Route::get('/', [CategoryController::class, 'index'])->name('category.index');
+        Route::get('/page/{page?}', [CategoryController::class, 'index'])->name('category.index');
         Route::get('/add', [CategoryController::class, 'create'])->name('category.create');
         Route::post('/add', [CategoryController::class, 'store']);
         Route::get('/edit/{id}', [CategoryController::class, 'edit'])->name('category.edit');
@@ -49,7 +50,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     // Brand
     Route::prefix('/brand')->group(function () {
-        Route::get('/', [BrandController::class, 'index'])->name('brand.index');
+        Route::get('/page/{page?}', [BrandController::class, 'index'])->name('brand.index');
         Route::get('/add', [BrandController::class, 'create'])->name('brand.create');
         Route::post('/add', [BrandController::class, 'store']);
         Route::get('/edit/{id}', [BrandController::class, 'edit'])->name('brand.edit');
@@ -60,7 +61,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     // Color
     Route::prefix('/color')->group(function () {
-        Route::get('/', [ColorController::class, 'index'])->name('color.index');
+        Route::get('/page/{page?}', [ColorController::class, 'index'])->name('color.index');
         Route::get('/add', [ColorController::class, 'create'])->name('color.create');
         Route::post('/add', [ColorController::class, 'store']);
         Route::get('/edit/{id}', [ColorController::class, 'edit'])->name('color.edit');
@@ -71,7 +72,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     // Size
     Route::prefix('/size')->group(function () {
-        Route::get('/', [SizeController::class, 'index'])->name('size.index');
+        Route::get('/page/{page?}', [SizeController::class, 'index'])->name('size.index');
         Route::get('/add', [SizeController::class, 'create'])->name('size.create');
         Route::post('/add', [SizeController::class, 'store']);
         Route::get('/edit/{id}', [SizeController::class, 'edit'])->name('size.edit');
@@ -92,13 +93,24 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     // Products
     Route::prefix('/product')->group(function () {
-        Route::get('/page/{page}', [ProductController::class, 'index'])->name('product.index');
+        Route::get('/page/{page?}', [ProductController::class, 'index'])->name('product.index');
         Route::get('/add', [ProductController::class, 'create'])->name('product.create');
         Route::post('/add', [ProductController::class, 'store']);
         Route::get('/edit/{id}', [ProductController::class, 'edit'])->name('product.edit');
         Route::post('/edit/{id}', [ProductController::class, 'update']);
         Route::post('/delete', [ProductController::class, 'destroy'])->name('product.delete');
         Route::get('/search', [ProductController::class, 'search'])->name('product.search');
+    });
+
+    // Products
+    Route::prefix('/product-price')->group(function () {
+        Route::get('/product/{product_id}/page/{page?}', [ProductPriceController::class, 'index'])->name('product_price.index');
+        Route::get('/add', [ProductPriceController::class, 'create'])->name('product_price.create');
+        Route::post('/add', [ProductPriceController::class, 'store']);
+        Route::get('/edit/{id}', [ProductPriceController::class, 'edit'])->name('product_price.edit');
+        Route::post('/edit/{id}', [ProductPriceController::class, 'update']);
+        Route::post('/delete', [ProductPriceController::class, 'destroy'])->name('product_price.delete');
+        Route::get('/search', [ProductPriceController::class, 'search'])->name('product_price.search');
     });
 });
 

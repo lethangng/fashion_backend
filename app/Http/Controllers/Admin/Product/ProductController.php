@@ -15,6 +15,8 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\Admin\Brand\BrandController;
 use App\Http\Controllers\Admin\Category\CategoryController;
 
+use function PHPSTORM_META\map;
+
 class ProductController extends Controller
 {
     /**
@@ -22,23 +24,29 @@ class ProductController extends Controller
      */
     public function index($page = 1)
     {
-        $products = Product::latest()->paginate(10, ['id', 'name', 'category_id', 'brand_id', 'image'], 'page', $page);
+        $products = Product::latest()->paginate(20, ['id', 'name', 'category_id', 'image'], 'page', $page);
+
+        $total_pages = $products->lastPage();
+        $current_page = $products->currentPage();
+
+        // dd($current_page);
+
         $products = $products->map(function ($product) {
-            // $category = (new CategoryController())->getCategoryById($product->category_id);
             $categoryName = CategoryController::getCategoryById($product->category_id)->name;
-            $brandName = BrandController::getBrandById($product->category_id)->name;
+            // $brandName = BrandController::getBrandById($product->category_id)->name;
             $imageUrl = (new UploadController())->getImage($product->image);
+
             return [
                 'id' => $product->id,
                 'name' => $product->name,
                 'price' => $product->price,
                 'category_name' => $categoryName,
-                'brand_name' => $brandName,
+                'import_price' => $product->import_price,
                 'image_url' => $imageUrl,
             ];
         });
         // dd($products);
-        return view('admin.products.index', compact('products'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('admin.products.index', compact('products', 'total_pages', 'current_page'));
     }
 
     /**
@@ -67,6 +75,7 @@ class ProductController extends Controller
             'status' => 'required',
             'newest' => 'required',
             'price' => 'required',
+            'import_price' => 'required',
             'image_product' => 'required',
         ], [
             'name.required' => 'Vui lòng nhập tên sản phẩm.',
@@ -148,7 +157,22 @@ class ProductController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $product = Product::find($id);
+        $categories = Category::all();
+        $brands = Brand::all();
+        $colors = Color::all();
+        $sizes = Size::all();
+
+        $image_url = (new UploadController())->getImage($product->image);
+        $list_image_url = json_decode($product->list_image);
+        $list_image_url = collect($list_image_url)->map(function ($item) {
+            $imageUrl = (new UploadController())->getImage($item);
+            return $imageUrl;
+        });
+
+        // dd(json_decode($list_image_url));
+        // dd($product->description);
+        return view('admin.products.edit', compact('categories', 'brands', 'colors', 'sizes', 'product', 'image_url', 'list_image_url'));
     }
 
     /**
