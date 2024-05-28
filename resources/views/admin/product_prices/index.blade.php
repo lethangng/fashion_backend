@@ -2,6 +2,7 @@
 @section('title', 'Quản lý giá')
 
 @section('script')
+
     <script>
         $(document).ready(function() {
             var selectedItems = [];
@@ -21,11 +22,12 @@
             function handleDelete() {
                 if (selectedItems.length > 0) {
                     $.ajax({
-                        url: window.location.href,
+                        url: "{{ route('product_price.delete') }}",
                         type: 'POST',
                         data: {
                             _token: @json(csrf_token()),
-                            id: selectedItems
+                            id: selectedItems,
+                            product_id: "{{ $product_id }}"
                         },
                         success: function(response) {
                             console.log(response);
@@ -139,7 +141,7 @@
                                                     </span>
                                                 </button>
 
-                                                <a href="{{ route('product_price.create') }}"
+                                                <a href="{{ route('product_price.create', $product_id) }}"
                                                     class=" btn btn-success waves-effect waves-light w-xs">
                                                     <i class="bx bx-add-to-queue"></i>
                                                     Thêm
@@ -191,6 +193,7 @@
                                                 <th class="align-middle">Giá bán</th>
                                                 <th class="align-middle">Giá niêm yết</th>
                                                 <th class="align-middle">Tiết kiệm</th>
+                                                <th class="align-middle">Thời gian tạo</th>
                                                 <th class="text-center">Sửa</th>
                                                 <th class="text-center">Xóa</th>
                                             </tr>
@@ -215,6 +218,10 @@
                                                     <td>
                                                         {{ $product_price->sell_off }}
                                                     </td>
+
+                                                    <td>
+                                                        {{ $product_price->created_at->format('H:i d-m-Y') }}
+                                                    </td>
                                                     <td class="text-center">
                                                         <a class="btn btn-warning btn-sm"
                                                             href="{{ route('product_price.edit', $product_price->id) }}">
@@ -226,6 +233,8 @@
                                                         @csrf
                                                         <input type="hidden" name="id"
                                                             value="{{ $product_price->id }}">
+                                                        <input type="hidden" name="product_id"
+                                                            value="{{ $product_price->product_id }}">
 
                                                         <td class="text-center">
                                                             <button type="button" class="btn btn-danger btn-sm"

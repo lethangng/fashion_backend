@@ -22,7 +22,7 @@ class ProductController extends Controller
      */
     public function index($page = 1)
     {
-        $products = Product::latest()->paginate(20, ['id', 'name', 'category_id', 'image'], 'page', $page);
+        $products = Product::latest()->paginate(20, ['id', 'name', 'category_id', 'image', 'import_price'], 'page', $page);
 
         $total_pages = $products->lastPage();
         $current_page = $products->currentPage();
@@ -43,7 +43,7 @@ class ProductController extends Controller
                 'image_url' => $imageUrl,
             ];
         });
-        // dd($products);
+
         return view('admin.products.index', compact('products', 'total_pages', 'current_page'));
     }
 

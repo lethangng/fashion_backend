@@ -102,11 +102,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::get('/search', [ProductController::class, 'search'])->name('product.search');
     });
 
-    // Products
+    // Product price
     Route::prefix('/product-price')->group(function () {
         Route::get('/product/{product_id}/page/{page?}', [ProductPriceController::class, 'index'])->name('product_price.index');
-        Route::get('/add', [ProductPriceController::class, 'create'])->name('product_price.create');
-        Route::post('/add', [ProductPriceController::class, 'store']);
+        Route::get('/add/product/{product_id}', [ProductPriceController::class, 'create'])->name('product_price.create');
+        Route::post('/add/product/{product_id}', [ProductPriceController::class, 'store']);
         Route::get('/edit/{id}', [ProductPriceController::class, 'edit'])->name('product_price.edit');
         Route::post('/edit/{id}', [ProductPriceController::class, 'update']);
         Route::post('/delete', [ProductPriceController::class, 'destroy'])->name('product_price.delete');

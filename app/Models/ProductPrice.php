@@ -16,5 +16,6 @@ class ProductPrice extends Model
         'product_id',
         'price',
         'sell_off',
+        'price_off',
     ];
 }
