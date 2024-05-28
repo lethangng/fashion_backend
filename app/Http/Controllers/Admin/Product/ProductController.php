@@ -15,8 +15,6 @@ use App\Http\Controllers\UploadController;
 use App\Http\Controllers\Admin\Brand\BrandController;
 use App\Http\Controllers\Admin\Category\CategoryController;
 
-use function PHPSTORM_META\map;
-
 class ProductController extends Controller
 {
     /**
@@ -163,14 +161,20 @@ class ProductController extends Controller
         $colors = Color::all();
         $sizes = Size::all();
 
-        $image_url = (new UploadController())->getImage($product->image);
+        $image_url = json_encode([
+            'image_name' => $product->image,
+            'image_url' => (new UploadController())->getImage($product->image),
+        ]);
         $list_image_url = json_decode($product->list_image);
         $list_image_url = collect($list_image_url)->map(function ($item) {
-            $imageUrl = (new UploadController())->getImage($item);
+            $imageUrl = [
+                'image_name' => $item,
+                'image_url' => (new UploadController())->getImage($item),
+            ];
             return $imageUrl;
         });
 
-        // dd(json_decode($list_image_url));
+        // dd($image_url);
         // dd($product->description);
         return view('admin.products.edit', compact('categories', 'brands', 'colors', 'sizes', 'product', 'image_url', 'list_image_url'));
     }
@@ -180,7 +184,98 @@ class ProductController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        // return response()->json($$request->only('list_images_product_url'));
+        // return response()->json($request->all());
+        $validator = Validator::make($request->all(), [
+            'name' => 'required',
+            'category_id' => 'required',
+            'brand_id' => 'required',
+            'status' => 'required',
+            'newest' => 'required',
+            'import_price' => 'required',
+            'image_product' => 'required',
+        ], [
+            'name.required' => 'Vui lòng nhập tên sản phẩm.',
+        ]);
+
+
+        if ($validator->fails()) {
+            return response()->json([
+                'res' => 'error',
+                'mes' => '',
+                'data' => $validator->errors(),
+            ]);
+        } else {
+            try {
+                $product = Product::find($request->id);
+                // return response()->json($product);
+
+                $firebaseStorage = new UploadController();
+                $firebase_storage_path = 'images/';
+
+                if (!$request->hasFile('image_product')) {
+                    if ($request->image_product != $product->image) {
+                        return response()->json([
+                            'res' => 'error',
+                            'mes' => 'Vui lòng thêm hình ảnh sản phẩm',
+                            'data' => [],
+                        ]);
+                    } else {
+                        $request['image'] = $request->image_product;
+                    }
+                } else {
+                    // return response()->json('ok');
+                    $firebaseStorage->destroy($product->image);
+                    $image = $request->file('image_product');
+
+                    $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
+                    $request['image'] = $downloadUrl;
+                }
+
+
+                $list_images = [];
+
+                $arrayListImage = json_decode($product->list_image);
+                $listImagesProductUrl = $request->list_images_product_url;
+                foreach ($request->list_images_product as $image) {
+                    // foreach ($images as $image) {
+                    // }
+                    if (is_file($image)) {
+                        $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
+                        $list_images[] = $downloadUrl;
+                    }
+                }
+                // foreach ($listImagesProductUrl as $image) {
+                //     // foreach ($images as $image) {
+                //     // }
+                //     if (in_array($image, $arrayListImage)) {
+                //         $list_images[] = $image;
+                //     }
+                // }
+                foreach ($arrayListImage as $image) {
+                    if (in_array($image, $listImagesProductUrl)) {
+                        $list_images[] = $image;
+                    } else {
+                        $firebaseStorage->destroy($image);
+                    }
+                }
+
+
+                $request['list_image'] = json_encode($list_images);
+
+                // return response()->json($request->all());
+                $product->update($request->all());
+
+                toastr()->success('Sửa thành công!');
+            } catch (\Exception $e) {
+                toastr()->error('Sửa thất bại.');
+                return response()->json([
+                    'res' => 'error',
+                    'mes' => '',
+                    'data' => $e->getMessage(),
+                ]);
+            }
+        }
     }
 
     /**

@@ -2,10 +2,10 @@
 @section('title', 'Sửa sản phẩm')
 
 @section('css')
+
     <link href="{{ asset('assets') }}/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
     <!-- Plugins css -->
     <link href="{{ asset('assets') }}/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
-
     <style>
         .dropzone .dz-preview .dz-progress {
             top: 115% !important;
@@ -60,18 +60,20 @@
             dictFileTooBig: 'Vui lòng chọn hình ảnh dưới 1 MB',
 
             init: function() {
-                var imageUrl = "{{ $image_url }}";
-                imageUrl = imageUrl.replaceAll('amp;', '');
+                var imageUrl = {!! $image_url !!};
+                // console.log(imageUrl['image_name'].split('/').pop());
+
                 var mockFile = {
-                    name: 'Image',
+                    // name: imageUrl['image_name'].split('/').pop(),
+                    name: imageUrl['image_name'],
                     size: 1024,
-                    // type: 'image/*',
-                    // accepted: true // required if using 'MaxFiles' option
+                    type: 'image/*',
+                    accepted: true,
                 };
                 this.files.push(mockFile); // add to files array
                 this.emit("addedfile", mockFile);
                 this.emit("thumbnail", mockFile,
-                    imageUrl
+                    imageUrl['image_url']
                 );
                 this.emit("complete", mockFile);
             }
@@ -92,26 +94,23 @@
             dictFileTooBig: 'Vui lòng chọn hình ảnh dưới 1 MB',
 
             init: function() {
-                var list_image_url = "{{ $list_image_url }}";
-                list_image_url = JSON.parse(list_image_url.replace(/&quot;/g, '"'));
-                list_image_url = list_image_url.map((item) => item.replaceAll('amp;', ''));
+                var list_image_url = {!! $list_image_url !!};
 
-                // console.log(list_image_url);
-                var mockFile = {
-                    name: 'Image',
-                    size: 1024,
-                    // type: 'image/*',
-                    accepted: true // required if using 'MaxFiles' option
-                };
                 list_image_url.forEach(item => {
+                    var mockFile = {
+                        // name: item['image_name'].split('/').pop(),
+                        name: item['image_name'],
+                        size: 1024,
+                        type: 'image/*',
+                        accepted: true,
+                    };
                     this.files.push(mockFile); // add to files array
                     this.emit("addedfile", mockFile);
                     this.emit("thumbnail", mockFile,
-                        item
+                        item['image_url']
                     );
                     this.emit("complete", mockFile);
                 });
-
             }
         });
     </script>
@@ -293,8 +292,6 @@
         }).then(editor => {
             myEditor = editor;
         });
-
-        // myEditor.setData("<div>ok day</div>");
     </script>
 
     <script>
@@ -302,44 +299,50 @@
             var selectedSizes = [];
             var selectedColors = [];
 
-            $('input[name="size"]').click(function() {
-                var isChecked = $(this).prop('checked');
-                var value = $(this).val();
-                if (isChecked && !selectedSizes.includes(value)) {
-                    selectedSizes.push(value);
-                } else if (!isChecked) {
-                    var index = selectedSizes.indexOf(value);
-                    if (index !== -1) {
-                        selectedSizes.splice(index, 1);
-                    }
-                }
-                console.log(selectedSizes);
-            });
-
-            $('input[name="color"]').click(function() {
-                var isChecked = $(this).prop('checked');
-                var value = $(this).val();
-                if (isChecked && !selectedColors.includes(value)) {
-                    selectedColors.push(value);
-                } else if (!isChecked) {
-                    var index = selectedColors.indexOf(value);
-                    if (index !== -1) {
-                        selectedColors.splice(index, 1);
-                    }
-                }
-                console.log(selectedColors);
-            });
-
             $('#btn-add').click(function(e) {
                 e.preventDefault();
+                $('input[name="size"]').each(function() {
+                    var isChecked = $(this).prop('checked');
+                    var value = $(this).val();
+                    if (isChecked) {
+                        selectedSizes.push(value);
+                    }
+                });
+                console.log(selectedSizes);
+
+                $('input[name="color"]').each(function() {
+                    var isChecked = $(this).prop('checked');
+                    var value = $(this).val();
+                    if (isChecked) {
+                        selectedColors.push(value);
+                    }
+                });
+                console.log(selectedColors);
 
                 // Lấy danh sách các file đã upload
-                var image = dropzoneImage.getAcceptedFiles()[0];
+                // var image = dropzoneImage.getAcceptedFiles()[0];
+                var image = dropzoneImage.getAcceptedFiles();
                 console.log("Image:", image);
                 // return;
 
-                var list_images = dropzoneListImages.getAcceptedFiles();
-                console.log("List image:", list_images);
+                if (image[0] instanceof File) {
+                    //
+                } else {
+                    image = image[0]['name'];
+                }
+
+                var list_image_url = [];
+                var list_images = [];
+
+                dropzoneListImages.getAcceptedFiles().forEach(function(image) {
+                    if (image instanceof File) {
+                        list_images.push(image);
+                    } else {
+                        list_image_url.push(image['name']);
+                    }
+                });
+
+                // console.log("List image:", list_images);
 
                 var formData = new FormData();
                 formData.append('_token', @json(csrf_token()));
@@ -348,7 +351,11 @@
                 for (var i = 0; i < list_images.length; i++) {
                     formData.append('list_images_product[]', list_images[i]);
                 }
+                for (var i = 0; i < list_image_url.length; i++) {
+                    formData.append('list_images_product_url[]', list_image_url[i]);
+                }
                 // formData.append('list_images', list_images);
+                // console.log(formData);
 
                 formData.append('description', myEditor.getData());
                 formData.append('colors', JSON.stringify(selectedColors));
@@ -356,6 +363,7 @@
 
                 var isNew = $('input[name="newest"]').prop('checked');
                 formData.append('newest', isNew ? 1 : 0);
+                formData.append('id', "{{ $product->id }}");
 
                 var inputs = [{
                         name: 'name',
@@ -374,16 +382,8 @@
                         selector: 'select[name="status"]'
                     },
                     {
-                        name: 'price',
-                        selector: 'input[name="price"]'
-                    },
-                    {
-                        name: 'price_off',
-                        selector: 'input[name="price_off"]'
-                    },
-                    {
-                        name: 'sell_off',
-                        selector: 'input[name="sell_off"]'
+                        name: 'import_price',
+                        selector: 'input[name="import_price"]'
                     },
                 ];
 
@@ -628,7 +628,7 @@
                                     <div class="text-end">
                                         <button type="submit" class="btn btn-success waves-effect waves-light w-xs"
                                             id="btn-add">
-                                            Thêm
+                                            Sửa
                                         </button>
                                     </div>
                                 </div>

@@ -24,6 +24,7 @@ class Product extends Model
         'list_image',
         'colors',
         'sizes',
+        'import_price',
         'description',
     ];
 }
