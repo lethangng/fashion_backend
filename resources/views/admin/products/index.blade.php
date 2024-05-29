@@ -29,7 +29,7 @@
             function handleDelete() {
                 if (selectedItems.length > 0) {
                     $.ajax({
-                        url: window.location.href,
+                        url: "{{ route('product.delete') }}",
                         type: 'POST',
                         data: {
                             _token: @json(csrf_token()),
@@ -37,7 +37,7 @@
                         },
                         success: function(response) {
                             console.log(response);
-                            window.location.href = window.location.href;
+                            // window.location.href = window.location.href;
                         },
                         error: function(e) {
                             console.log('Lỗi ' + e.responseText);

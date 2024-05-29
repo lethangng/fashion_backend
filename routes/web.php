@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\Brand\BrandController;
 use App\Http\Controllers\Admin\Color\ColorController;
 use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Category\CategoryController;
+use App\Http\Controllers\Admin\Coupon\CouponController;
 use App\Http\Controllers\Admin\Dashboard\DashboardController;
 use App\Http\Controllers\Admin\Product\ProductPriceController;
 
@@ -111,6 +112,18 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/edit/{id}', [ProductPriceController::class, 'update']);
         Route::post('/delete', [ProductPriceController::class, 'destroy'])->name('product_price.delete');
         Route::get('/search', [ProductPriceController::class, 'search'])->name('product_price.search');
+    });
+
+
+    // Coupon
+    Route::prefix('/coupon')->group(function () {
+        Route::get('/page/{page?}', [CouponController::class, 'index'])->name('coupon.index');
+        Route::get('/add', [CouponController::class, 'create'])->name('coupon.create');
+        Route::post('/add', [CouponController::class, 'store']);
+        Route::get('/edit/{id}', [CouponController::class, 'edit'])->name('coupon.edit');
+        Route::post('/edit/{id}', [CouponController::class, 'update']);
+        Route::post('/delete', [CouponController::class, 'destroy'])->name('coupon.delete');
+        Route::get('/search', [CouponController::class, 'search'])->name('coupon.search');
     });
 });
 

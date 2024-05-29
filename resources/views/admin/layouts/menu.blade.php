@@ -103,8 +103,8 @@
                         <span key="t-ecommerce">Quản lý Coupon</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('brand.index') }}" key="t-products">Coupon</a></li>
-                        <li><a href="{{ route('brand.create') }}" key="t-product-detail">Thêm coupon</a></li>
+                        <li><a href="{{ route('coupon.index') }}" key="t-products">Coupon</a></li>
+                        <li><a href="{{ route('coupon.create') }}" key="t-product-detail">Thêm coupon</a></li>
                     </ul>
                 </li>
 

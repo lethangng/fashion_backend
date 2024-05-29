@@ -14,9 +14,9 @@ return new class extends Migration
         Schema::create('product_prices', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('product_id')->nullable();
-            $table->double('price')->nullable();
-            $table->double('price_off')->nullable();
-            $table->integer('sell_off')->nullable();
+            $table->integer('price')->default(0)->comment('Giá bán');
+            $table->integer('price_off')->default(0)->comment('Giá niêm yết');
+            $table->string('sell_off')->nullable()->comment('Giảm giá bao nhiêu phần trăm');
             $table->timestamps();
         });
     }

@@ -19,11 +19,11 @@ return new class extends Migration
             $table->unsignedBigInteger('brand_id')->nullable();
             $table->string('colors')->nullable();
             $table->string('sizes')->nullable();
-            $table->double('import_price')->nullable();
-            $table->boolean('newest')->nullable();
+            $table->integer('import_price')->default(0)->comment('Giá nhập');
+            $table->boolean('newest')->default(1)->comment('1: mới nhất | 0: không phải');
             $table->string('image')->nullable();
-            $table->text('list_image')->nullable();
-            $table->boolean('status')->nullable();
+            $table->text('list_images')->nullable();
+            $table->boolean('status')->default(1)->comment('1: còn hàng | 0: hết hàng');
             $table->timestamps();
         });
     }

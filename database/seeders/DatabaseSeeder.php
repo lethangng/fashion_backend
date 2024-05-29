@@ -4,8 +4,10 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\Size;
 use App\Models\User;
 use App\Models\Brand;
+use App\Models\Color;
 use App\Models\Category;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -26,32 +28,50 @@ class DatabaseSeeder extends Seeder
         $user->login_type = 'password';
         $user->save();
 
-        $category = new Category();
-        $category->name = 'Quần áo nam';
-        $category->save();
+        $categories = ['Quần áo nam', 'Quần áo nữ', 'Quần áo trẻ em', 'Phụ kiện'];
 
-        $category = new Category();
-        $category->name = 'Quần áo nữ';
-        $category->save();
+        foreach ($categories as $categoryName) {
+            $category = new Category();
+            $category->name = $categoryName;
+            $category->save();
+        }
 
-        $category = new Category();
-        $category->name = 'Quần áo trẻ em';
-        $category->save();
+        $brands = ['H&M', 'Nike', 'Gucci', 'Adidas'];
 
-        $category = new Brand();
-        $category->name = 'H&M';
-        $category->save();
+        foreach ($brands as $brandName) {
+            $brand = new Brand();
+            $brand->name = $brandName;
+            $brand->save();
+        }
 
-        $category = new Brand();
-        $category->name = 'Nike';
-        $category->save();
+        $sizes = ['L', 'M', 'XL', 'S', '2XL'];
 
-        $category = new Brand();
-        $category->name = 'Gucci';
-        $category->save();
+        foreach ($sizes as $sizeName) {
+            $size = new Size();
+            $size->size = $sizeName;
+            $size->save();
+        }
 
-        $category = new Brand();
-        $category->name = 'Adidas';
-        $category->save();
+        $colors = [
+            [
+                'name' => 'Xanh',
+                'color' => '#50a5f1',
+            ],
+            [
+                'name' => 'Vàng',
+                'color' => '#ffd966',
+            ],
+            [
+                'name' => 'Hồng',
+                'color' => '#e06666',
+            ]
+        ];
+
+        foreach ($colors as $colorName) {
+            $color = new Color();
+            $color->name = $colorName['name'];
+            $color->color = $colorName['color'];
+            $color->save();
+        }
     }
 }

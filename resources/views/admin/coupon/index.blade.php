@@ -1,5 +1,5 @@
 @extends('admin.master')
-@section('title', 'Kích thước')
+@section('title', 'Mã giảm giá')
 
 @section('script')
     <script>
@@ -21,7 +21,7 @@
             function handleDelete() {
                 if (selectedItems.length > 0) {
                     $.ajax({
-                        url: "{{ route('size.delete') }}",
+                        url: "{{ route('coupon.delete') }}",
                         type: 'POST',
                         data: {
                             _token: @json(csrf_token()),
@@ -93,7 +93,7 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                            <h4 class="mb-sm-0 font-size-18">Kích thước</h4>
+                            <h4 class="mb-sm-0 font-size-18">Mã giảm giá</h4>
                         </div>
                     </div>
                 </div>
@@ -138,7 +138,7 @@
                                                     </span>
                                                 </button>
 
-                                                <a href="{{ route('size.create') }}"
+                                                <a href="{{ route('coupon.create') }}"
                                                     class=" btn btn-success waves-effect waves-light w-xs">
                                                     <i class="bx bx-add-to-queue"></i>
                                                     Thêm
@@ -185,53 +185,63 @@
                                                         <input class="form-check-input" type="checkbox" id="select-all">
                                                     </div>
                                                 </th>
-                                                {{-- <th class="align-middle">STT</th> --}}
-                                                <th class="align-middle">Kích thước</th>
+                                                <th class="align-middle">Tên Mã giảm giá</th>
+                                                <th class="align-middle">Mã code</th>
+                                                <th class="align-middle">Giá trị giảm</th>
+                                                <th class="align-middle">Giảm giá cho đơn hàng từ</th>
                                                 <th class="align-middle">Mô tả</th>
                                                 <th class="text-center">Sửa</th>
                                                 <th class="text-center">Xóa</th>
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            @foreach ($sizes as $size)
+                                            @foreach ($coupons as $coupon)
                                                 <tr>
                                                     <td>
                                                         <div class="form-check font-size-16">
                                                             <input class="form-check-input checkbox" type="checkbox"
-                                                                id="{{ $size->id }}" value="{{ $size->id }}">
-                                                            {{-- <label class="form-check-label"
-                                                                for="transactionCheck02"></label> --}}
+                                                                id="{{ $coupon->id }}" value="{{ $coupon->id }}">
+
                                                         </div>
                                                     </td>
 
-                                                    {{-- <td>{{ ++$i }}</td> --}}
                                                     <td>
-                                                        {{ $size->size }}
+                                                        {{ $coupon->name }}
                                                     </td>
                                                     <td>
-                                                        {{ $size->description }}
+                                                        {{ $coupon->code }}
                                                     </td>
-                                                    <form action="{{ route('size.delete') }}" method="POST">
+                                                    <td>
+                                                        {{ $coupon->price }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $coupon->for_sum }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $coupon->description }}
+                                                    </td>
+                                                    <td class="text-center">
+                                                        <a class="btn btn-warning btn-sm"
+                                                            href="{{ route('coupon.edit', $coupon->id) }}">
+                                                            <i class="fas fa-pencil-alt">
+                                                            </i>
+                                                        </a>
+                                                    </td>
+                                                    <form action="{{ route('coupon.delete') }}" method="POST">
                                                         @csrf
-                                                        <input type="hidden" name="id" value="{{ $size->id }}">
-                                                        <td class="text-center">
-                                                            <a class="btn btn-warning btn-sm"
-                                                                href="{{ route('size.edit', $size->id) }}">
-                                                                <i class="fas fa-pencil-alt">
-                                                                </i>
-                                                            </a>
-                                                        </td>
+                                                        <input type="hidden" name="id" value="{{ $coupon->id }}">
+
                                                         <td class="text-center">
                                                             <button type="button" class="btn btn-danger btn-sm"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#exampleModal{{ $size->id }}"
+                                                                data-bs-target="#exampleModal{{ $coupon->id }}"
                                                                 data-bs-whatever="@mdo">
 
                                                                 <span class="icon-status node-delete-53">
                                                                     <i class="fas fa-trash"></i>
                                                                 </span>
                                                             </button>
-                                                            <div class="modal fade" id="exampleModal{{ $size->id }}"
+                                                            <div class="modal fade" id="exampleModal{{ $coupon->id }}"
                                                                 tabindex="-1" aria-labelledby="exampleModalLabel"
                                                                 aria-hidden="true">
                                                                 <div class="modal-dialog">
@@ -280,17 +290,17 @@
                         <ul class="pagination pagination-rounded justify-content-center mt-1 mb-4 pb-1">
                             @for ($i = 1; $i < $total_pages + 1; $i++)
                                 <li @class(['page-item', 'disabled' => $current_page == 1])>
-                                    <a href="{{ route('size.index', $i - 1) }}" class="page-link"><i
+                                    <a href="{{ route('coupon.index', $i - 1) }}" class="page-link"><i
                                             class="mdi mdi-chevron-left"></i>
                                     </a>
                                 </li>
 
                                 <li @class(['page-item', 'active' => $i == $current_page])>
-                                    <a href="{{ route('size.index', $i) }}" class="page-link">{{ $i }}</a>
+                                    <a href="{{ route('coupon.index', $i) }}" class="page-link">{{ $i }}</a>
                                 </li>
 
                                 <li @class(['page-item', 'disabled' => $current_page == $total_pages])>
-                                    <a href="{{ route('size.index', $i + 1) }}" class="page-link"><i
+                                    <a href="{{ route('coupon.index', $i + 1) }}" class="page-link"><i
                                             class="mdi mdi-chevron-right"></i>
                                     </a>
                                 </li>

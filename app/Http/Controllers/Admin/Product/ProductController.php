@@ -12,7 +12,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UploadController;
-use App\Http\Controllers\Admin\Brand\BrandController;
+use Illuminate\Validation\ValidationException;
 use App\Http\Controllers\Admin\Category\CategoryController;
 
 class ProductController extends Controller
@@ -31,7 +31,6 @@ class ProductController extends Controller
 
         $products = $products->map(function ($product) {
             $categoryName = CategoryController::getCategoryById($product->category_id)->name;
-            // $brandName = BrandController::getBrandById($product->category_id)->name;
             $imageUrl = (new UploadController())->getImage($product->image);
 
             return [
@@ -161,17 +160,19 @@ class ProductController extends Controller
         $colors = Color::all();
         $sizes = Size::all();
 
+        $firebaseStorage = new UploadController();
+
         $image_url = json_encode([
             'image_name' => $product->image,
-            'image_url' => (new UploadController())->getImage($product->image),
+            'image_url' => $firebaseStorage->getImage($product->image),
         ]);
+
         $list_image_url = json_decode($product->list_image);
         $list_image_url = collect($list_image_url)->map(function ($item) {
-            $imageUrl = [
+            return [
                 'image_name' => $item,
                 'image_url' => (new UploadController())->getImage($item),
             ];
-            return $imageUrl;
         });
 
         // dd($image_url);
@@ -192,7 +193,7 @@ class ProductController extends Controller
             'brand_id' => 'required',
             'status' => 'required',
             'newest' => 'required',
-            'import_price' => 'required',
+            'import_prices' => 'required',
             'image_product' => 'required',
         ], [
             'name.required' => 'Vui lòng nhập tên sản phẩm.',
@@ -238,20 +239,12 @@ class ProductController extends Controller
                 $arrayListImage = json_decode($product->list_image);
                 $listImagesProductUrl = $request->list_images_product_url;
                 foreach ($request->list_images_product as $image) {
-                    // foreach ($images as $image) {
-                    // }
                     if (is_file($image)) {
                         $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
                         $list_images[] = $downloadUrl;
                     }
                 }
-                // foreach ($listImagesProductUrl as $image) {
-                //     // foreach ($images as $image) {
-                //     // }
-                //     if (in_array($image, $arrayListImage)) {
-                //         $list_images[] = $image;
-                //     }
-                // }
+
                 foreach ($arrayListImage as $image) {
                     if (in_array($image, $listImagesProductUrl)) {
                         $list_images[] = $image;
@@ -259,7 +252,6 @@ class ProductController extends Controller
                         $firebaseStorage->destroy($image);
                     }
                 }
-
 
                 $request['list_image'] = json_encode($list_images);
 
@@ -281,18 +273,67 @@ class ProductController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        //
+        return response()->json($request->all());
+
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+        ]);
+
+        $firebaseStorage = new UploadController();
+        if (request()->ajax()) {
+            try {
+                $ids = $request->id;
+                foreach ($ids as $id) {
+                    $product = Product::find($id);
+                    $firebaseStorage->destroy($product->image);
+
+                    $list_image = json_decode($product->list_image);
+
+                    foreach ($list_image as $image) {
+                        $firebaseStorage->destroy($image);
+                    }
+
+                    $product->delete();
+                }
+                toastr()->success('Xóa thành công!');
+                return response()->json($request->id);
+            } catch (\Exception $e) {
+                return response()->json($e);
+            }
+        }
+
+        if ($validator->fails()) {
+            toastr()->error('Không tìm thấy.');
+            throw new ValidationException($validator);
+        } else {
+            try {
+                $product = Product::find($request->id);
+
+                $firebaseStorage->destroy($product->image);
+
+                $list_image = json_decode($product->list_image);
+
+                foreach ($list_image as $image) {
+                    $firebaseStorage->destroy($image);
+                }
+
+                $product->delete();
+                toastr()->success('Xóa thành công!');
+                return redirect()->route('product.index');
+            } catch (\Exception $e) {
+                toastr()->error('Xóa thất bại.');
+            }
+        }
     }
 
     public function search(Request $request)
     {
-
         $search = trim($request->search);
         $search = preg_replace('/\s+/', ' ', $search);
         $categories = Product::where('name', 'like', '%' . $search . '%')->paginate(10);
 
-        return view('admin.products.index', compact('products', 'search'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('admin.products.index', compact('products', 'search'));
     }
 }

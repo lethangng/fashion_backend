@@ -21,7 +21,7 @@
             function handleDelete() {
                 if (selectedItems.length > 0) {
                     $.ajax({
-                        url: window.location.href,
+                        url: "{{ route('color.delete') }}",
                         type: 'POST',
                         data: {
                             _token: @json(csrf_token()),
@@ -209,17 +209,20 @@
                                                         {{ $color->name }}
                                                     </td>
                                                     <td>
-                                                        {{ $color->color }}
+                                                        <label class="form-check-label" for="formCheckColor1"
+                                                            style="background: {{ $color->color }}; width: 15px; height:15px;">
+                                                        </label>
+
                                                     </td>
                                                     <td>
                                                         {{ $color->description }}
                                                     </td>
-                                                    <form action="{{ route('size.delete') }}" method="POST">
+                                                    <form action="{{ route('color.delete') }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{ $color->id }}">
                                                         <td class="text-center">
                                                             <a class="btn btn-warning btn-sm"
-                                                                href="{{ route('size.edit', $color->id) }}">
+                                                                href="{{ route('color.edit', $color->id) }}">
                                                                 <i class="fas fa-pencil-alt">
                                                                 </i>
                                                             </a>

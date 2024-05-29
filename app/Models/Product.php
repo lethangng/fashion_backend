@@ -21,7 +21,7 @@ class Product extends Model
         'sell_off',
         'image',
         'price_off',
-        'list_image',
+        'list_images',
         'colors',
         'sizes',
         'import_price',
