@@ -101,13 +101,13 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium">Đơn hàng</p>
-                                                <h4 class="mb-0">1,235</h4>
+                                                <h4 class="mb-0">{{ $order_count }}</h4>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
                                                 <div class="mini-stat-icon avatar-sm rounded-circle bg-primary">
                                                     <span class="avatar-title">
-                                                        <i class="bx bx-copy-alt font-size-24"></i>
+                                                        <i class="fas fa-cart-plus font-size-24"></i>
                                                     </span>
                                                 </div>
                                             </div>
@@ -121,13 +121,13 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium">Người dùng</p>
-                                                <h4 class="mb-0">$35, 723</h4>
+                                                <h4 class="mb-0">{{ $user_count - 1 }}</h4>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center ">
                                                 <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
                                                     <span class="avatar-title rounded-circle bg-primary">
-                                                        <i class="bx bx-archive-in font-size-24"></i>
+                                                        <i class="fas fa-user font-size-24"></i>
                                                     </span>
                                                 </div>
                                             </div>
@@ -141,13 +141,13 @@
                                         <div class="d-flex">
                                             <div class="flex-grow-1">
                                                 <p class="text-muted fw-medium">Sản phẩm</p>
-                                                <h4 class="mb-0">$16.2</h4>
+                                                <h4 class="mb-0">{{ $product_count }}</h4>
                                             </div>
 
                                             <div class="flex-shrink-0 align-self-center">
                                                 <div class="avatar-sm rounded-circle bg-primary mini-stat-icon">
                                                     <span class="avatar-title rounded-circle bg-primary">
-                                                        <i class="bx bx-purchase-tag-alt font-size-24"></i>
+                                                        <i class="fas fa-box font-size-24"></i>
                                                     </span>
                                                 </div>
                                             </div>

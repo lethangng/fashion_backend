@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\Api\EvaluatesController;
 use App\Http\Controllers\Auth\RegisterController;
 
 /*
@@ -49,4 +50,8 @@ Route::prefix('/')->group(function () {
     Route::post('check-login', [UserController::class, 'checkLogin'])->name('checkLogin');
 
     Route::get('reset-password', [UserController::class, 'resetPassword'])->name('reset-password');
+});
+
+Route::prefix('/evaluates')->group(function () {
+    Route::post('/add', [EvaluatesController::class, 'store'])->name('evaluates.create');
 });

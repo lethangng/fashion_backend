@@ -116,11 +116,11 @@
                         <span key="t-ecommerce">Quản lý Đánh giá</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="ecommerce-products.html" key="t-products">Đánh giá</a></li>
+                        <li><a href="{{ route('evaluate.index') }}" key="t-products">Đánh giá</a></li>
                     </ul>
                 </li>
 
-                <li>
+                {{-- <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="fas fa-chart-line"></i>
                         <span key="t-ecommerce">Thống kê</span>
@@ -128,7 +128,7 @@
                     <ul class="sub-menu" aria-expanded="false">
                         <li><a href="ecommerce-products.html" key="t-products">Thống kê</a></li>
                     </ul>
-                </li>
+                </li> --}}
 
             </ul>
         </div>

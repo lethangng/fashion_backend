@@ -6,10 +6,11 @@ use App\Http\Controllers\Admin\Size\SizeController;
 use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Admin\Brand\BrandController;
 use App\Http\Controllers\Admin\Color\ColorController;
+use App\Http\Controllers\Admin\Coupon\CouponController;
 use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Category\CategoryController;
-use App\Http\Controllers\Admin\Coupon\CouponController;
 use App\Http\Controllers\Admin\Dashboard\DashboardController;
+use App\Http\Controllers\Admin\Evaluates\EvaluatesController;
 use App\Http\Controllers\Admin\Product\ProductPriceController;
 
 /*
@@ -124,6 +125,15 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/edit/{id}', [CouponController::class, 'update']);
         Route::post('/delete', [CouponController::class, 'destroy'])->name('coupon.delete');
         Route::get('/search', [CouponController::class, 'search'])->name('coupon.search');
+    });
+
+    // Evaluates
+    Route::prefix('/evaluates')->group(function () {
+        Route::get('/page/{page?}', [EvaluatesController::class, 'index'])->name('evaluate.index');
+        // Route::get('/show/{id}', [EvaluatesController::class, 'show'])->name('evaluate.show');
+        Route::post('/edit', [EvaluatesController::class, 'update'])->name('evaluate.update');
+        Route::post('/delete', [EvaluatesController::class, 'destroy'])->name('evaluate.delete');
+        Route::get('/search', [EvaluatesController::class, 'search'])->name('evaluate.search');
     });
 });
 

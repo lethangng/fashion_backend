@@ -5,9 +5,9 @@ namespace App\Http\Controllers\Admin\User;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Auth\UserQuery;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Auth;
+// use Illuminate\Support\Facades\Auth;
 use Kreait\Firebase\Exception\AuthException;
-use Kreait\Laravel\Firebase\Facades\Firebase;
+// use Kreait\Laravel\Firebase\Facades\Firebase;
 use Kreait\Firebase\Exception\Auth\UserNotFound;
 
 class UserController extends Controller
@@ -19,6 +19,13 @@ class UserController extends Controller
         // $this->firebaseAuth = Firebase::auth();
         $this->firebaseAuth = app('firebase.auth');;
     }
+
+    public function totalUser()
+    {
+        $users = $this->firebaseAuth->listUsers();
+        return iterator_count($users);
+    }
+
     public function index()
     {
         $userQuery = [
@@ -45,7 +52,7 @@ class UserController extends Controller
         })->toArray();
 
 
-        return view('admin.users.index', compact('users'))->with('i', (request()->input('page', 1) - 1) * 10);
+        return view('admin.users.index', compact('users'));
     }
 
     public function destroy(Request $request)
