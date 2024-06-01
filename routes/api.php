@@ -4,9 +4,11 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Api\EvaluatesController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\Api\DeliveryAddressController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,4 +56,12 @@ Route::prefix('/')->group(function () {
 
 Route::prefix('/evaluates')->group(function () {
     Route::post('/add', [EvaluatesController::class, 'store'])->name('evaluates.create');
+});
+
+Route::prefix('/delivery-address')->group(function () {
+    Route::post('/add', [DeliveryAddressController::class, 'store']);
+});
+
+Route::prefix('/order')->group(function () {
+    Route::post('/add', [OrderController::class, 'store']);
 });

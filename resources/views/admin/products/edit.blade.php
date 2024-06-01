@@ -490,8 +490,8 @@
 
                                 <div class="mb-3 row">
                                     <label for="example-search-input" class="col-md-2 col-form-label">Mới nhất</label>
-                                    <div class="col-md-10">
-                                        <div class="row row-cols-lg-auto g-3 align-items-center">
+                                    <div class="col-md-10 d-flex align-items-center">
+                                        <div class="row row-cols-lg-auto g-3">
                                             <div class="col-12">
                                                 <div class="form-check">
                                                     <input class="form-check-input" type="checkbox" name="newest"
@@ -504,8 +504,8 @@
 
                                 <div class="mb-3 row">
                                     <label for="example-search-input" class="col-md-2 col-form-label">Kích cỡ</label>
-                                    <div class="col-md-10">
-                                        <div class="row row-cols-lg-auto g-3 align-items-center">
+                                    <div class="col-md-10 d-flex align-items-center">
+                                        <div class="row row-cols-lg-auto g-3">
                                             @php
                                                 $sizeValue = json_decode($product->sizes);
                                             @endphp
@@ -527,8 +527,8 @@
 
                                 <div class="row">
                                     <label for="example-search-input" class="col-md-2 col-form-label">Màu sắc</label>
-                                    <div class="col-md-10">
-                                        <div class="row row-cols-lg-auto g-3 align-items-center">
+                                    <div class="col-md-10 d-flex align-items-center">
+                                        <div class="row row-cols-lg-auto g-3">
                                             @php
                                                 $colorValue = json_decode($product->colors);
                                             @endphp

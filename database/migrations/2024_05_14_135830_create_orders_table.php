@@ -13,13 +13,13 @@ return new class extends Migration
     {
         Schema::create('orders', function (Blueprint $table) {
             $table->id();
-            $table->double('total_price')->nullable();
-            $table->unsignedBigInteger('delivery_address_id')->nullable();
+            $table->integer('total_price')->default(0);
+            $table->string('delivery_address')->nullable();
             $table->unsignedBigInteger('user_id')->nullable();
-            $table->unsignedBigInteger('coupon_id')->nullable();
-            $table->timestamp('order_date')->nullable()->comment('Ngay dat hang');
-            $table->timestamp('delivery_date')->nullable()->comment('Ngay giao hang');
-            $table->integer('status')->nullable()->comment('Trang thai don hang: Đang xử lý|Đã giao|Đã hủy|  0: mới tiếp nhận, 2: đang xử lý, 3: chuyển qua kho đóng gói, 4: đang giao hàng, 1: hoàn tất');
+            $table->integer('price_off')->default(0);
+            // $table->timestamp('order_date')->nullable()->comment('Ngay dat hang');
+            // $table->timestamp('delivery_date')->nullable()->comment('Ngay giao hang');
+            $table->integer('status')->default(0)->comment('Trang thai don hang:  0: mới tiếp nhận, 1: đang xử lý, 2: chuyển qua kho đóng gói, 3: đang giao hàng, 4: hoàn tất');
             $table->timestamps();
         });
     }

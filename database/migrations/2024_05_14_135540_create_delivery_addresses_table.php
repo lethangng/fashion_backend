@@ -16,7 +16,7 @@ return new class extends Migration
             $table->unsignedBigInteger('user_id')->nullable();
             $table->string('city')->nullable()->comment('Tinh/Thanh pho');
             $table->string('address')->nullable()->comment('Vi tri cu the');
-            $table->boolean('is_select')->nullable()->comment('Dia chi mac dinh');
+            $table->boolean('is_select')->default(0)->comment('Dia chi mac dinh');
             $table->timestamps();
         });
     }

@@ -32,11 +32,12 @@ class ProductController extends Controller
         $products = $products->map(function ($product) {
             $categoryName = CategoryController::getCategoryById($product->category_id)->name;
             $imageUrl = (new UploadController())->getImage($product->image);
+            // dd($product);
 
             return [
                 'id' => $product->id,
                 'name' => $product->name,
-                'price' => $product->price,
+                'import_price' => $product->import_price,
                 'category_name' => $categoryName,
                 'import_price' => $product->import_price,
                 'image_url' => $imageUrl,
@@ -122,12 +123,12 @@ class ProductController extends Controller
                 // return response()->json($request->all());
                 $product = Product::create($request->all());
 
-                $product_price = new ProductPrice();
-                $product_price->product_id = $product->id;
-                $product_price->price = $price;
-                $product_price->price_off = $price_off;
-                $product_price->sell_off = $sell_off;
-                $product_price->save();
+                ProductPrice::create([
+                    'product_id' => $product->id,
+                    'price' => $price,
+                    'price_off' => $price_off ?? 0,
+                    'sell_off' => $sell_off ?? 0,
+                ]);
 
                 toastr()->success('Thêm sản phẩm thành công!');
             } catch (\Exception $e) {
@@ -238,10 +239,19 @@ class ProductController extends Controller
 
                 $arrayListImage = json_decode($product->list_image);
                 $listImagesProductUrl = $request->list_images_product_url;
-                foreach ($request->list_images_product as $image) {
-                    if (is_file($image)) {
-                        $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
-                        $list_images[] = $downloadUrl;
+                // foreach ($request->list_images_product as $image) {
+                //     if (is_file($image)) {
+                //         $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
+                //         $list_images[] = $downloadUrl;
+                //     }
+                // }
+
+                foreach ($request->only('list_images_product') as $images) {
+                    foreach ($images as $image) {
+                        if (is_file($image)) {
+                            $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
+                            $list_images[] = $downloadUrl;
+                        }
                     }
                 }
 
@@ -335,5 +345,11 @@ class ProductController extends Controller
         $categories = Product::where('name', 'like', '%' . $search . '%')->paginate(10);
 
         return view('admin.products.index', compact('products', 'search'));
+    }
+
+    public function statistical(int $month)
+    {
+        $productCount = Product::whereMonth('created_at', $month)->count();
+        return $productCount;
     }
 }

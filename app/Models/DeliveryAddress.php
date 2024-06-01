@@ -8,4 +8,14 @@ use Illuminate\Database\Eloquent\Model;
 class DeliveryAddress extends Model
 {
     use HasFactory;
+    protected $table = 'delivery_addresses';
+    protected $guarded = ['id'];
+
+    protected $fillable = [
+        'id',
+        'user_id',
+        'city',
+        'address',
+        'is_select',
+    ];
 }

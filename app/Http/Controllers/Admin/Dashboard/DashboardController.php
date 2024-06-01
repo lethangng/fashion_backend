@@ -8,6 +8,8 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Admin\User\UserController;
+use App\Http\Controllers\Admin\Order\OrderController;
+use App\Http\Controllers\Admin\Product\ProductController;
 
 class DashboardController extends Controller
 {
@@ -22,6 +24,19 @@ class DashboardController extends Controller
         $order_count = Order::count();
         $user_count = (new UserController())->totalUser();
 
-        return view('admin.index', compact('product_count', 'order_count', 'user_count'));
+        $thong_ke_product = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $count = (new ProductController)->statistical($i);
+            $thong_ke_product[] = $count;
+        }
+
+        $thong_ke_order = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $count = (new OrderController)->statistical($i);
+            $thong_ke_order[] = $count;
+        }
+        // dd($thong_ke_product);
+
+        return view('admin.index', compact('product_count', 'order_count', 'user_count', 'thong_ke_product', 'thong_ke_order'));
     }
 }

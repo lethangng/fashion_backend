@@ -141,4 +141,20 @@ class UserController extends Controller
 
         return view('admin.users.index', compact('users', 'search'))->with('i', (request()->input('page', 1) - 1) * 10);
     }
+
+    public function statistical(int $month)
+    {
+        // $userQuery = [
+        //     // 'sortBy' => UserQuery::FIELD_CREATED_AT,
+        //     // 'order' => UserQuery::ORDER_DESC,
+        //     // 'order' => UserQuery::ORDER_DESC # this is the default
+        //     'offset' => 0,
+        //     // 'limit' => 20, # The maximum supported limit is 500
+        //     'filter' => [UserQuery::FIELD_CREATED_AT => $month],
+        // ];
+
+        // $users = $this->firebaseAuth->queryUsers($userQuery);
+        // $productCount = Product::whereMonth('created_at', $month)->count();
+        // return $productCount;
+    }
 }

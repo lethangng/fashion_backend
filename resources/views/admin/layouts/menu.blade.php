@@ -93,18 +93,18 @@
                         <span key="t-ecommerce">Quản lý Đơn hàng</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="ecommerce-products.html" key="t-products">Đơn hàng</a></li>
+                        <li><a href="{{ route('order.index') }}" key="t-products">Đơn hàng</a></li>
                     </ul>
                 </li>
 
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="bx bxs-coupon"></i>
-                        <span key="t-ecommerce">Quản lý Coupon</span>
+                        <span key="t-ecommerce">Quản lý Mã giảm giá</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="{{ route('coupon.index') }}" key="t-products">Coupon</a></li>
-                        <li><a href="{{ route('coupon.create') }}" key="t-product-detail">Thêm coupon</a></li>
+                        <li><a href="{{ route('coupon.index') }}" key="t-products">Mã giảm giá</a></li>
+                        <li><a href="{{ route('coupon.create') }}" key="t-product-detail">Thêm mã giảm giá</a></li>
                     </ul>
                 </li>
 

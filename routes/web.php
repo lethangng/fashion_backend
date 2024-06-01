@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\Size\SizeController;
 use App\Http\Controllers\Admin\User\UserController;
 use App\Http\Controllers\Admin\Brand\BrandController;
 use App\Http\Controllers\Admin\Color\ColorController;
+use App\Http\Controllers\Admin\Order\OrderController;
 use App\Http\Controllers\Admin\Coupon\CouponController;
 use App\Http\Controllers\Admin\Product\ProductController;
 use App\Http\Controllers\Admin\Category\CategoryController;
@@ -134,6 +135,16 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/edit', [EvaluatesController::class, 'update'])->name('evaluate.update');
         Route::post('/delete', [EvaluatesController::class, 'destroy'])->name('evaluate.delete');
         Route::get('/search', [EvaluatesController::class, 'search'])->name('evaluate.search');
+    });
+
+    // Orders
+    Route::prefix('/orders')->group(function () {
+        Route::get('/page/{page?}', [OrderController::class, 'index'])->name('order.index');
+        // Route::get('/show/{id}', [OrderController::class, 'show'])->name('order.show');
+        Route::get('/edit/{id}', [OrderController::class, 'edit'])->name('order.edit');
+        Route::post('/edit/{id}', [OrderController::class, 'update']);
+        Route::post('/delete', [OrderController::class, 'destroy'])->name('order.delete');
+        Route::get('/search', [OrderController::class, 'search'])->name('order.search');
     });
 });
 

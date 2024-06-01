@@ -9,6 +9,7 @@ use App\Models\User;
 use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Category;
+use App\Models\DeliveryAddress;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -73,5 +74,11 @@ class DatabaseSeeder extends Seeder
             $color->color = $colorName['color'];
             $color->save();
         }
+
+        $deliveryAddress = new DeliveryAddress();
+        $deliveryAddress->user_id = 1;
+        $deliveryAddress->city = 'Hà Nội';
+        $deliveryAddress->address = 'ĐH.Thủy Lợi';
+        $deliveryAddress->save();
     }
 }

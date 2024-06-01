@@ -1,6 +1,70 @@
 @extends('admin.master')
 @section('title', 'Dashboard')
 
+@section('script')
+    <!-- apexcharts -->
+    <script src="{{ asset('assets') }}/libs/apexcharts/apexcharts.min.js"></script>
+
+    <script>
+        var options = {
+            series: [{
+                    name: 'Đơn hàng',
+                    data: {!! json_encode($thong_ke_order) !!}
+                },
+                // {
+                //     name: 'Người dùng',
+                //     data: [76, 85, 101, 98, 87, 105, 91, 114, 94, 10, 11, 12]
+                // },
+                {
+                    name: 'Sản phẩm',
+                    data: {!! json_encode($thong_ke_product) !!}
+                }
+            ],
+            chart: {
+                type: 'bar',
+                height: 350,
+            },
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                    endingShape: 'rounded'
+                },
+            },
+            dataLabels: {
+                enabled: false
+            },
+            stroke: {
+                show: true,
+                width: 2,
+                colors: ['transparent']
+            },
+            xaxis: {
+                categories: ['T.1', 'T.2', 'T.3', 'T.4', 'T.5', 'T.6', 'T.7', 'T.8', 'T.9', 'T.10', 'T.11', 'T.12'],
+            },
+            // yaxis: {
+            //     title: {
+            //         text: '$ (thousands)'
+            //     }
+            // },
+            fill: {
+                opacity: 1
+            },
+            tooltip: {
+                y: {
+                    formatter: function(val) {
+                        return val
+                    }
+                }
+            },
+
+        };
+
+        var chart = new ApexCharts(document.querySelector("#chart"), options);
+        chart.render();
+    </script>
+@endsection
+
 @section('main-content')
     <div class="main-content">
 
@@ -58,40 +122,17 @@
                                                     <p class="text-muted mb-0">Doanh thu</p>
                                                 </div>
                                             </div>
-                                            <div class="mt-4">
+                                            {{-- <div class="mt-4">
                                                 <a href="javascript: void(0);"
                                                     class="btn btn-primary waves-effect waves-light btn-sm">View Profile <i
                                                         class="mdi mdi-arrow-right ms-1"></i></a>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="card">
-                            <div class="card-body">
-                                <h4 class="card-title mb-4">Thu nhập tháng</h4>
-                                <div class="row">
-                                    <div class="col-sm-6">
-                                        <p class="text-muted">Tháng này</p>
-                                        <h3>$34,252</h3>
-                                        <p class="text-muted"><span class="text-success me-2"> 12% <i
-                                                    class="mdi mdi-arrow-up"></i> </span> So với tháng trước</p>
 
-                                        <div class="mt-4">
-                                            <a href="javascript: void(0);"
-                                                class="btn btn-primary waves-effect waves-light btn-sm">View More <i
-                                                    class="mdi mdi-arrow-right ms-1"></i></a>
-                                        </div>
-                                    </div>
-                                    <div class="col-sm-6">
-                                        <div class="mt-4 mt-sm-0">
-                                            <div id="radialBar-chart" class="apex-charts"></div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
                     </div>
                     <div class="col-xl-8">
                         <div class="row">
@@ -158,31 +199,35 @@
                         </div>
                         <!-- end row -->
 
-                        <div class="card">
-                            <div class="card-body">
-                                <div class="d-sm-flex flex-wrap">
-                                    <h4 class="card-title mb-4">Đơn hàng</h4>
-                                    <div class="ms-auto">
-                                        <ul class="nav nav-pills">
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#">Tuần</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" href="#">Tháng</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link active" href="#">Năm</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                </div>
 
-                                <div id="stacked-column-chart" class="apex-charts" dir="ltr"></div>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 <!-- end row -->
+
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-sm-flex flex-wrap">
+                            <h4 class="card-title mb-4">Thống kê</h4>
+                            <div class="ms-auto">
+                                {{-- <ul class="nav nav-pills">
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Tuần</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link" href="#">Tháng</a>
+                                    </li>
+                                    <li class="nav-item">
+                                        <a class="nav-link active" href="#">Năm</a>
+                                    </li>
+                                </ul> --}}
+
+                            </div>
+                        </div>
+
+                        {{-- <div id="stacked-column-chart" class="apex-charts" dir="ltr"></div> --}}
+                        <div id="chart" class="apex-charts" dir="ltr"></div>
+                    </div>
+                </div>
             </div>
             <!-- container-fluid -->
         </div>
