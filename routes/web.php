@@ -13,6 +13,7 @@ use App\Http\Controllers\Admin\Category\CategoryController;
 use App\Http\Controllers\Admin\Dashboard\DashboardController;
 use App\Http\Controllers\Admin\Evaluates\EvaluatesController;
 use App\Http\Controllers\Admin\Product\ProductPriceController;
+use App\Http\Controllers\Admin\User\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -145,6 +146,13 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/edit/{id}', [OrderController::class, 'update']);
         Route::post('/delete', [OrderController::class, 'destroy'])->name('order.delete');
         Route::get('/search', [OrderController::class, 'search'])->name('order.search');
+    });
+
+    // Profile
+    Route::prefix('/profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
+        // Route::get('/edit/{id}', [ProfileController::class, 'edit'])->name('order.edit');
+        Route::post('/edit/{id}', [ProfileController::class, 'update'])->name('profile.edit');
     });
 });
 

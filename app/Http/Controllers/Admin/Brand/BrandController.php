@@ -90,7 +90,7 @@ class BrandController extends Controller
         return redirect()->route('brand.index');
     }
 
-    /**
+    /** 
      * Remove the specified resource from storage.
      */
     public function destroy(Request $request)

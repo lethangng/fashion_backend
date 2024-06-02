@@ -50,7 +50,7 @@
                                                     'Đang xử lý',
                                                     'Chuyển qua kho đóng gói',
                                                     'Đang giao hàng',
-                                                    'Đang giao hàng',
+                                                    'Hoàn tất',
                                                 ];
                                             @endphp
                                             @foreach ($status as $item)

@@ -1,9 +1,16 @@
 @extends('admin.master')
 @section('title', 'Dashboard')
 
+@section('css')
+    <link href="{{ asset('assets') }}/libs/bootstrap-datepicker/css/bootstrap-datepicker.min.css" rel="stylesheet"
+        type="text/css">
+@endsection
+
 @section('script')
     <!-- apexcharts -->
     <script src="{{ asset('assets') }}/libs/apexcharts/apexcharts.min.js"></script>
+
+    <script src="{{ asset('assets') }}/libs/bootstrap-datepicker/js/bootstrap-datepicker.min.js"></script>
 
     <script>
         var options = {
@@ -11,10 +18,10 @@
                     name: 'Đơn hàng',
                     data: {!! json_encode($thong_ke_order) !!}
                 },
-                // {
-                //     name: 'Người dùng',
-                //     data: [76, 85, 101, 98, 87, 105, 91, 114, 94, 10, 11, 12]
-                // },
+                {
+                    name: 'Người dùng',
+                    data: {!! json_encode($thong_ke_user) !!}
+                },
                 {
                     name: 'Sản phẩm',
                     data: {!! json_encode($thong_ke_product) !!}
@@ -43,9 +50,9 @@
                 categories: ['T.1', 'T.2', 'T.3', 'T.4', 'T.5', 'T.6', 'T.7', 'T.8', 'T.9', 'T.10', 'T.11', 'T.12'],
             },
             // yaxis: {
-            //     title: {
-            //         text: '$ (thousands)'
-            //     }
+            // title: {
+            // text: '$ (thousands)'
+            // }
             // },
             fill: {
                 opacity: 1
@@ -82,7 +89,7 @@
                 <!-- end page title -->
 
                 <div class="row">
-                    <div class="col-xl-4">
+                    {{-- <div class="col-xl-4">
                         <div class="card overflow-hidden">
                             <div class="bg-primary bg-soft">
                                 <div class="row">
@@ -122,19 +129,19 @@
                                                     <p class="text-muted mb-0">Doanh thu</p>
                                                 </div>
                                             </div>
-                                            {{-- <div class="mt-4">
+                                            <div class="mt-4">
                                                 <a href="javascript: void(0);"
                                                     class="btn btn-primary waves-effect waves-light btn-sm">View Profile <i
                                                         class="mdi mdi-arrow-right ms-1"></i></a>
-                                            </div> --}}
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
 
-                    </div>
-                    <div class="col-xl-8">
+                    </div> --}}
+                    <div class="col-xl-12">
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="card mini-stats-wid">
@@ -198,8 +205,6 @@
                             </div>
                         </div>
                         <!-- end row -->
-
-
                     </div>
                 </div>
                 <!-- end row -->
@@ -209,22 +214,25 @@
                         <div class="d-sm-flex flex-wrap">
                             <h4 class="card-title mb-4">Thống kê</h4>
                             <div class="ms-auto">
-                                {{-- <ul class="nav nav-pills">
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="#">Tuần</a>
+                                @csrf
+                                <form class="nav nav-pills" method="GET" action="{{ route('admin.index') }}">
+                                    <li class="nav-item me-1">
+                                        <div class="position-relative" id="datepicker5">
+                                            <input type="text" class="form-control" data-provide="datepicker"
+                                                data-date-container='#datepicker5' data-date-format="yyyy"
+                                                data-date-min-view-mode="2" placeholder="Nhập năm..." name="year"
+                                                value="{{ $year }}">
+                                        </div>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="#">Tháng</a>
+                                        <button class="nav-link active" type="submit"><i
+                                                class="mdi mdi-clipboard-search-outline"></i></button>
                                     </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="#">Năm</a>
-                                    </li>
-                                </ul> --}}
+                                </form>
 
                             </div>
                         </div>
 
-                        {{-- <div id="stacked-column-chart" class="apex-charts" dir="ltr"></div> --}}
                         <div id="chart" class="apex-charts" dir="ltr"></div>
                     </div>
                 </div>

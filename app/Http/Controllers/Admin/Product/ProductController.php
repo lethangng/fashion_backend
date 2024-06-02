@@ -338,18 +338,43 @@ class ProductController extends Controller
         }
     }
 
-    public function search(Request $request)
+    public function search(Request $request, $page = 1)
     {
         $search = trim($request->search);
         $search = preg_replace('/\s+/', ' ', $search);
-        $categories = Product::where('name', 'like', '%' . $search . '%')->paginate(10);
+        $products = Product::where('name', 'like', '%' . $search . '%')->latest()->paginate(20, ['id', 'name', 'category_id', 'image', 'import_price'], 'page', $page);
 
-        return view('admin.products.index', compact('products', 'search'));
+        $total_pages = $products->lastPage();
+        $current_page = $products->currentPage();
+
+        // dd($current_page);
+
+        $products = $products->map(function ($product) {
+            $categoryName = CategoryController::getCategoryById($product->category_id)->name;
+            $imageUrl = (new UploadController())->getImage($product->image);
+            // dd($product);
+
+            return [
+                'id' => $product->id,
+                'name' => $product->name,
+                'import_price' => $product->import_price,
+                'category_name' => $categoryName,
+                'import_price' => $product->import_price,
+                'image_url' => $imageUrl,
+            ];
+        });
+
+        return view('admin.products.index', compact('products', 'total_pages', 'current_page', 'search'));
     }
 
-    public function statistical(int $month)
+    public function statistical(int $year)
     {
-        $productCount = Product::whereMonth('created_at', $month)->count();
-        return $productCount;
+        $thong_ke = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $count = Product::whereMonth('created_at', $i)->whereYear('created_at', $year)->count();
+            $thong_ke[] = $count;
+        }
+
+        return $thong_ke;
     }
 }

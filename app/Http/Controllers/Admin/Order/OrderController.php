@@ -4,13 +4,14 @@ namespace App\Http\Controllers\Admin\Order;
 
 use App\Models\User;
 use App\Models\Order;
+use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\UploadController;
 
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\UploadController;
 use Illuminate\Validation\ValidationException;
 
 class OrderController extends Controller
@@ -75,10 +76,12 @@ class OrderController extends Controller
         } else {
             $order = Order::find($id);
             $user = User::find($order->user_id);
+
             $order_products = OrderProduct::where('order_id', $order->id)->get();
             $order_products = $order_products->map(function ($order_product) {
                 $product = Product::find($order_product->product_id);
                 $imageUrl = (new UploadController())->getImage($product->image);
+
 
                 return [
                     'id' => $product->id,
@@ -132,9 +135,14 @@ class OrderController extends Controller
         //
     }
 
-    public function statistical(int $month)
+    public function statistical(int $year)
     {
-        $orderCount = Order::whereMonth('created_at', $month)->count();
-        return $orderCount;
+        $thong_ke = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $count = Order::whereMonth('created_at', $i)->whereYear('created_at', $year)->count();
+            $thong_ke[] = $count;
+        }
+
+        return $thong_ke;
     }
 }

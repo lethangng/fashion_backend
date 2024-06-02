@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers\Admin\Product;
 
-use App\Http\Controllers\Controller;
+use App\Models\Product;
 use App\Models\ProductPrice;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
@@ -15,11 +16,12 @@ class ProductPriceController extends Controller
      */
     public function index(string $product_id, string $page)
     {
+        $product_name = Product::find($product_id)->name;
         $product_prices = ProductPrice::where('product_id', $product_id)->latest()->paginate(10, ['*'], 'page', $page);
         $total_pages = $product_prices->lastPage();
         $current_page = $product_prices->currentPage();
 
-        return view('admin.product_prices.index', compact('product_prices', 'total_pages', 'current_page', 'product_id'));
+        return view('admin.product_prices.index', compact('product_prices', 'total_pages', 'current_page', 'product_id', 'product_name'));
     }
 
     /**

@@ -14,10 +14,10 @@
 
                 <a href="index.html" class="logo logo-light">
                     <span class="logo-sm">
-                        <img src="{{ asset('assets') }}/images/logo-light.svg" alt="" height="22">
+                        <img src="{{ asset('assets') }}/images/logo-3-light.svg" alt="" height="22">
                     </span>
                     <span class="logo-lg">
-                        <img src="{{ asset('assets') }}/images/logo-light.png" alt="" height="19">
+                        <img src="{{ asset('assets') }}/images/logo-2-light.svg" alt="" height="30">
                     </span>
                 </a>
             </div>
@@ -64,7 +64,7 @@
                 </button>
             </div>
 
-            <div class="dropdown d-inline-block">
+            {{-- <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item noti-icon waves-effect"
                     id="page-header-notifications-dropdown" data-bs-toggle="dropdown" aria-haspopup="true"
                     aria-expanded="false">
@@ -78,9 +78,9 @@
                             <div class="col">
                                 <h6 class="m-0" key="t-notifications"> Notifications </h6>
                             </div>
-                            {{-- <div class="col-auto">
+                            <div class="col-auto">
                                 <a href="#!" class="small" key="t-view-all"> View All</a>
-                            </div> --}}
+                            </div>
                         </div>
                     </div>
                     <div data-simplebar style="max-height: 230px;">
@@ -156,19 +156,20 @@
                         </a>
                     </div>
                 </div>
-            </div>
+            </div> --}}
 
             <div class="dropdown d-inline-block">
                 <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
                     data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                    <img class="rounded-circle header-profile-user"
-                        src="{{ asset('assets') }}/images/users/avatar-1.jpg" alt="Header Avatar">
+                    {{-- <img class="rounded-circle header-profile-user"
+                        src="{{ asset('assets') }}/images/users/avatar-1.jpg" alt="Header Avatar"> --}}
                     <span class="d-none d-xl-inline-block ms-1" key="t-henry">{{ Auth::user()->fullname }}</span>
                     <i class="mdi mdi-chevron-down d-none d-xl-inline-block"></i>
                 </button>
                 <div class="dropdown-menu dropdown-menu-end">
                     <!-- item-->
-                    <a class="dropdown-item" href="#"><i class="bx bx-user font-size-16 align-middle me-1"></i>
+                    <a class="dropdown-item" href="{{ route('profile.index') }}"><i
+                            class="bx bx-user font-size-16 align-middle me-1"></i>
                         <span key="t-profile">Profile</span></a>
                     {{-- <a class="dropdown-item" href="#"><i
                             class="bx bx-wallet font-size-16 align-middle me-1"></i> <span key="t-my-wallet">My

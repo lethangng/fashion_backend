@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers\Admin\User;
 
+use App\Models\User;
 use Illuminate\Http\Request;
 use Kreait\Firebase\Auth\UserQuery;
-use App\Http\Controllers\Controller;
 // use Illuminate\Support\Facades\Auth;
-use Kreait\Firebase\Exception\AuthException;
+use App\Http\Controllers\Controller;
 // use Kreait\Laravel\Firebase\Facades\Firebase;
+use Kreait\Firebase\Exception\AuthException;
 use Kreait\Firebase\Exception\Auth\UserNotFound;
 
 class UserController extends Controller
@@ -142,19 +143,14 @@ class UserController extends Controller
         return view('admin.users.index', compact('users', 'search'))->with('i', (request()->input('page', 1) - 1) * 10);
     }
 
-    public function statistical(int $month)
+    public function statistical(int $year)
     {
-        // $userQuery = [
-        //     // 'sortBy' => UserQuery::FIELD_CREATED_AT,
-        //     // 'order' => UserQuery::ORDER_DESC,
-        //     // 'order' => UserQuery::ORDER_DESC # this is the default
-        //     'offset' => 0,
-        //     // 'limit' => 20, # The maximum supported limit is 500
-        //     'filter' => [UserQuery::FIELD_CREATED_AT => $month],
-        // ];
+        $thong_ke = [];
+        for ($i = 1; $i <= 12; $i++) {
+            $count = User::whereMonth('created_at', $i)->whereYear('created_at', $year)->count();
+            $thong_ke[] = $count;
+        }
 
-        // $users = $this->firebaseAuth->queryUsers($userQuery);
-        // $productCount = Product::whereMonth('created_at', $month)->count();
-        // return $productCount;
+        return $thong_ke;
     }
 }
