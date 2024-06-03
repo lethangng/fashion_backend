@@ -37,7 +37,7 @@
                         },
                         success: function(response) {
                             console.log(response);
-                            // window.location.href = window.location.href;
+                            window.location.href = window.location.href;
                         },
                         error: function(e) {
                             console.log('Lỗi ' + e.responseText);
@@ -233,16 +233,18 @@
                                                         </a>
                                                     </td>
 
+                                                    <td class="text-center">
+                                                        <a class="btn btn-warning btn-sm"
+                                                            href="{{ route('product.edit', $product['id']) }}">
+                                                            <i class="fas fa-pencil-alt">
+                                                            </i>
+                                                        </a>
+                                                    </td>
+
                                                     <form action="{{ route('product.delete') }}" method="POST">
                                                         @csrf
                                                         <input type="hidden" name="id" value="{{ $product['id'] }}">
-                                                        <td class="text-center">
-                                                            <a class="btn btn-warning btn-sm"
-                                                                href="{{ route('product.edit', $product['id']) }}">
-                                                                <i class="fas fa-pencil-alt">
-                                                                </i>
-                                                            </a>
-                                                        </td>
+
                                                         <td class="text-center">
                                                             <button type="button" class="btn btn-danger btn-sm"
                                                                 data-bs-toggle="modal"

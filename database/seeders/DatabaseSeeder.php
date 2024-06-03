@@ -29,7 +29,7 @@ class DatabaseSeeder extends Seeder
         $user->login_type = 'password';
         $user->save();
 
-        $categories = ['Quần áo nam', 'Quần áo nữ', 'Quần áo trẻ em', 'Phụ kiện'];
+        $categories = ['Thời trang nam', 'Thời trang nữ', 'Thời trang trẻ em', 'Phụ kiện'];
 
         foreach ($categories as $categoryName) {
             $category = new Category();

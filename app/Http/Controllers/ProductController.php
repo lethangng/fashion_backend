@@ -6,6 +6,8 @@ use Illuminate\Http\Request;
 use App\Models\Product;
 use Illuminate\Support\Facades\Validator;
 
+// Product::generateRecommendations('similar_products');
+
 class ProductController extends Controller
 {
     public function index()
@@ -15,12 +17,13 @@ class ProductController extends Controller
             'res' => 'done',
             'msg' => '',
             'data' => $products,
-            
+
         ];
         return response()->json($data, 200);
     }
 
-    public function upload(Request $request) {
+    public function upload(Request $request)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'price' => 'required'
@@ -36,8 +39,8 @@ class ProductController extends Controller
             return response()->json($data, 200);
         } else {
             $product = new Product;
-            $product-> name = $request->name;
-            $product-> price = $request->price;
+            $product->name = $request->name;
+            $product->price = $request->price;
 
             $product->save();
             $data = [
@@ -49,7 +52,8 @@ class ProductController extends Controller
         }
     }
 
-    public function edit(Request $request, $id) {
+    public function edit(Request $request, $id)
+    {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
             'price' => 'required'
@@ -65,8 +69,8 @@ class ProductController extends Controller
             return response()->json($data, 200);
         } else {
             $product = Product::find($id);
-            $product-> name = $request->name;
-            $product-> price = $request->price;
+            $product->name = $request->name;
+            $product->price = $request->price;
 
             $product->save();
             $data = [
@@ -78,7 +82,8 @@ class ProductController extends Controller
         }
     }
 
-    public function delete($id) {
+    public function delete($id)
+    {
         $product = Product::find($id);
         $product->delete();
 
