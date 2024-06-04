@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
@@ -63,9 +65,24 @@ Route::prefix('/delivery-address')->group(function () {
     Route::post('/add', [DeliveryAddressController::class, 'store']);
 });
 
+// Order
 Route::prefix('/order')->group(function () {
     Route::post('/add', [OrderController::class, 'store']);
 });
+
+// Categories
+Route::prefix('/categories')->group(function () {
+    Route::get('/', [CategoryController::class, 'index']);
+});
+
+// Categories
+Route::prefix('/brands')->group(function () {
+    Route::get('/', [BrandController::class, 'index']);
+});
+
+// Product
 Route::prefix('/product')->group(function () {
-    Route::get('/page/{page?}', [ProductController::class, 'index']);
+    Route::get('/page/{page?}/user/{user_id?}', [ProductController::class, 'index']);
+    Route::get('/detail/{id}', [ProductController::class, 'show']);
+    Route::get('/get-recommendations/{id}', [ProductController::class, 'getRecommendations']);
 });

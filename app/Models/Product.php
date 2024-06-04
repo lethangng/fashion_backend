@@ -63,14 +63,15 @@ class Product extends Model implements InteractWithRecommendation
                     'sizes',
                 ],
                 'similarity_numeric_value_attributes' => [
-                    // 'price'
+                    'price_off'
                 ],
                 'similarity_taxonomy_attributes'      => [
                     [
-                        'category' => 'name'
+                        'category' => 'name',
+                        'brand' => 'name',
                     ]
                 ],
-                'recommendation_count'                => 2,
+                'recommendation_count'                => 5,
                 'recommendation_order'                => 'desc'
             ]
         ];
@@ -81,6 +82,11 @@ class Product extends Model implements InteractWithRecommendation
      */
     public function category()
     {
-        return $this->hasOne(Category::class);
+        return $this->hasOne(Category::class, 'id');
+    }
+
+    public function brand()
+    {
+        return $this->hasOne(Brand::class, 'id');
     }
 }

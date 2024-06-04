@@ -63,8 +63,32 @@ class DatabaseSeeder extends Seeder
                 'color' => '#ffd966',
             ],
             [
+                'name' => 'Be',
+                'color' => '#d3c9bf',
+            ],
+            [
+                'name' => 'Đen',
+                'color' => 'black',
+            ],
+            [
+                'name' => 'Tím',
+                'color' => 'purple',
+            ],
+            [
+                'name' => 'Đỏ',
+                'color' => '#f44336',
+            ],
+            [
+                'name' => 'Bạc',
+                'color' => 'silver',
+            ],
+            [
+                'name' => 'Lục',
+                'color' => '#32a852',
+            ],
+            [
                 'name' => 'Hồng',
-                'color' => '#e06666',
+                'color' => 'pink',
             ]
         ];
 
