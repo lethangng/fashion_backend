@@ -28,10 +28,10 @@ class DashboardController extends Controller
         $year = $request->year ?? date('Y');
         $thong_ke_product = (new ProductController)->statistical($year);
         $thong_ke_order = (new OrderController)->statistical($year);
-        $thong_ke_user = (new UserController)->statistical($year);
+        // $thong_ke_user = (new UserController)->statistical($year);
 
         // dd($thong_ke_product);
 
-        return view('admin.index', compact('product_count', 'order_count', 'user_count', 'thong_ke_product', 'thong_ke_order', 'thong_ke_user', 'year'));
+        return view('admin.index', compact('product_count', 'order_count', 'user_count', 'thong_ke_product', 'thong_ke_order', 'year'));
     }
 }

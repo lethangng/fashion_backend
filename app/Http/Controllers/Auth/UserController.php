@@ -24,6 +24,7 @@ class UserController extends Controller
             'fullname' => 'required|min:10|max:30',
             'phone_number' => 'required|size:10'
         ]);
+
         $data = [
             'res' => 'error',
             'msg' => 'Cập nhập thất bại',

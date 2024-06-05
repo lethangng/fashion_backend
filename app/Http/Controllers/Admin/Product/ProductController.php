@@ -66,18 +66,22 @@ class ProductController extends Controller
     public function store(Request $request)
     {
         // return response()->json($request->all());
-        $validator = Validator::make($request->all(), [
-            'name' => 'required',
-            'category_id' => 'required',
-            'brand_id' => 'required',
-            'status' => 'required',
-            'newest' => 'required',
-            'price' => 'required',
-            'import_price' => 'required',
-            'image_product' => 'required',
-        ], [
-            'name.required' => 'Vui lòng nhập tên sản phẩm.',
-        ]);
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'name' => 'required',
+                'category_id' => 'required',
+                'brand_id' => 'required',
+                'status' => 'required',
+                'newest' => 'required',
+                'price' => 'required',
+                'import_price' => 'required',
+                'image_product' => 'required',
+            ]
+            // , [
+            //     'name.required' => 'Vui lòng nhập tên sản phẩm.',
+            // ]
+        );
 
         if (!$request->hasFile('image_product')) {
             return response()->json([
@@ -227,7 +231,7 @@ class ProductController extends Controller
                     }
                 } else {
                     // return response()->json('ok');
-                    $firebaseStorage->destroy($product->image);
+                    // $firebaseStorage->destroy($product->image);
                     $image = $request->file('image_product');
 
                     $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
@@ -259,7 +263,7 @@ class ProductController extends Controller
                     if (in_array($image, $listImagesProductUrl)) {
                         $list_images[] = $image;
                     } else {
-                        $firebaseStorage->destroy($image);
+                        // $firebaseStorage->destroy($image);
                     }
                 }
 
@@ -297,12 +301,12 @@ class ProductController extends Controller
                 $ids = $request->id;
                 foreach ($ids as $id) {
                     $product = Product::find($id);
-                    $firebaseStorage->destroy($product->image);
+                    // $firebaseStorage->destroy($product->image);
 
                     $list_images = json_decode($product->list_images);
 
                     foreach ($list_images as $image) {
-                        $firebaseStorage->destroy($image);
+                        // $firebaseStorage->destroy($image);
                     }
 
                     $product->delete();

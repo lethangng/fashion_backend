@@ -20,9 +20,10 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="card">
-                            <form action="" class="card-body" method="POST">
+                            <form action="{{ route('profile.edit') }}" class="card-body" method="POST">
                                 @csrf
                                 <input type="hidden" name="id" value="{{ $user->id }}">
+                                <input type="hidden" name="u_id" value="{{ $user->u_id }}">
                                 <div class="mb-3 row">
                                     <label for="example-text-input" class="col-md-2 col-form-label">Họ và tên</label>
                                     <div class="col-md-10">
@@ -37,9 +38,20 @@
                                 <div class="mb-3 row">
                                     <label for="example-text-input" class="col-md-2 col-form-label">Email</label>
                                     <div class="col-md-10">
-                                        <input class="form-control" type="text" placeholder="Email"
+                                        <input class="form-control" type="email" placeholder="Email"
                                             id="example-text-input" name="email" value="{{ $user->email }}">
                                         @error('email')
+                                            <div class="error">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                <div class="mb-3 row">
+                                    <label for="example-text-input" class="col-md-2 col-form-label">Số điện thoại</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" type="text" placeholder="Số điện thoại"
+                                            id="example-text-input" name="phone_number" value="{{ $user->phone_number }}">
+                                        @error('phone_number')
                                             <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
@@ -49,14 +61,26 @@
                                     <label for="example-text-input" class="col-md-2 col-form-label">Mật khẩu mới</label>
                                     <div class="col-md-10">
                                         <input class="form-control" type="text" placeholder="Nhập mật khẩu mới"
-                                            id="example-text-input" name="new-password" value="">
-                                        @error('new-password')
+                                            id="example-text-input" name="new_password" value="">
+                                        @error('new_password')
                                             <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
                                 </div>
 
                                 <div class="mb-3 row">
+                                    <label for="example-text-input" class="col-md-2 col-form-label">Nhập lại mật khẩu
+                                        mới</label>
+                                    <div class="col-md-10">
+                                        <input class="form-control" type="text" placeholder="Nhập lại mật khẩu mới"
+                                            id="example-text-input" name="confirm-password" value="">
+                                        @error('confirm-password')
+                                            <div class="error">{{ $message }}</div>
+                                        @enderror
+                                    </div>
+                                </div>
+
+                                {{-- <div class="mb-3 row">
                                     <label for="example-text-input" class="col-md-2 col-form-label">Mật khẩu hiện
                                         tại</label>
                                     <div class="col-md-10">
@@ -66,7 +90,7 @@
                                             <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
                                 <div class="row">
                                     <div class="text-end">

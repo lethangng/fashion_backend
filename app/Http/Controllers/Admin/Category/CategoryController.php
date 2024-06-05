@@ -33,28 +33,22 @@ class CategoryController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'name' => 'required',
-            // 'description' => 'required'
         ], [
             'name.required' => 'Vui lòng nhập tên danh mục.',
-            // 'description.required' => 'Vui lòng nhập mô tả.',
         ]);
 
         if ($validator->fails()) {
             throw new ValidationException($validator);
         } else {
-            // $category = new Category($request->all());
-            // $category->save();
-            $category = Category::create($request->all());
-
-            if ($category instanceof Category) {
+            try {
+                Category::create($request->all());
                 toastr()->success('Thêm danh mục mới thành công!');
 
                 return redirect()->route('category.index');
+            } catch (\Exception $e) {
+                toastr()->error('Thêm danh mục mới thất bại.');
+                return back();
             }
-
-            toastr()->error('Thêm danh mục mới thất bại.');
-
-            return back();
         }
     }
 
@@ -111,15 +105,15 @@ class CategoryController extends Controller
             toastr()->error('Thêm danh mục mới thất bại.');
             throw new ValidationException($validator);
         } else {
-            $category = Category::find($request->id);
+            try {
+                $category = Category::find($request->id);
+                $category->delete();
 
-            $result = $category->delete();
-            if (is_bool($result)) {
                 toastr()->success('Xóa thành công!');
-            } else {
+                return redirect()->route('category.index');
+            } catch (\Exception $e) {
                 toastr()->error('Xóa thất bại.');
             }
-            return redirect()->route('category.index');
         }
     }
 

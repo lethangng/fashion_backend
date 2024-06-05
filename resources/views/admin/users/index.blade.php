@@ -1,6 +1,88 @@
 @extends('admin.master')
 @section('title', 'Quản lý người dùng')
 
+@section('script')
+    <script>
+        $(document).ready(function() {
+            var selectedItems = [];
+            var isDelete = false;
+
+            function handleCheck() {
+                if (selectedItems.length > 0 && isDelete == false) {
+                    $('#btn-delete').removeClass('d-none');
+                    isDelete = true;
+                } else if (selectedItems.length == 0) {
+                    $('#btn-delete').addClass('d-none');
+                    isDelete = false;
+                }
+            }
+            // console.log(window.location.href);
+
+            function handleDelete() {
+                if (selectedItems.length > 0) {
+                    $.ajax({
+                        url: window.location.href,
+                        type: 'POST',
+                        data: {
+                            _token: @json(csrf_token()),
+                            id: selectedItems
+                        },
+                        success: function(response) {
+                            console.log(response);
+                            window.location.href = window.location.href;
+                        },
+                        error: function(e) {
+                            console.log('Lỗi ' + e.responseText);
+                        }
+                    });
+                }
+            }
+
+            $('#select-all').click(function() {
+                var isChecked = $(this).prop('checked');
+                $('.checkbox').prop('checked', isChecked);
+
+                if (isChecked) {
+                    $('.checkbox').each(function() {
+                        var value = $(this).val();
+                        if (!selectedItems.includes(value)) {
+                            selectedItems.push(value);
+                        }
+                    });
+                } else {
+                    selectedItems = [];
+                }
+
+                console.log(selectedItems);
+                handleCheck();
+            });
+
+            $('.checkbox').click(function() {
+                var isAllChecked = $('.checkbox:not(:checked)').length === 0;
+                $('#select-all').prop('checked', isAllChecked);
+
+                var isChecked = $(this).prop('checked');
+                var value = $(this).val();
+                if (isChecked && !selectedItems.includes(value)) {
+                    selectedItems.push(value);
+                } else if (!isChecked) {
+                    var index = selectedItems.indexOf(value);
+                    if (index !== -1) {
+                        selectedItems.splice(index, 1);
+                    }
+                }
+                console.log(selectedItems);
+                handleCheck();
+            });
+
+            $('#btn-submit-delete').on('click', function(e) {
+                e.preventDefault();
+                handleDelete();
+            });
+        });
+    </script>
+@endsection
+
 @section('main-content')
     <div class="main-content">
 
@@ -277,83 +359,5 @@
     </div>
 
 
-    <script>
-        $(document).ready(function() {
-            var selectedItems = [];
-            var isDelete = false;
 
-            function handleCheck() {
-                if (selectedItems.length > 0 && isDelete == false) {
-                    $('#btn-delete').removeClass('d-none');
-                    isDelete = true;
-                } else if (selectedItems.length == 0) {
-                    $('#btn-delete').addClass('d-none');
-                    isDelete = false;
-                }
-            }
-            // console.log(window.location.href);
-
-            function handleDelete() {
-                if (selectedItems.length > 0) {
-                    $.ajax({
-                        url: window.location.href,
-                        type: 'POST',
-                        data: {
-                            _token: @json(csrf_token()),
-                            id: selectedItems
-                        },
-                        success: function(response) {
-                            console.log(response);
-                            window.location.href = window.location.href;
-                        },
-                        error: function(e) {
-                            console.log('Lỗi ' + e.responseText);
-                        }
-                    });
-                }
-            }
-
-            $('#select-all').click(function() {
-                var isChecked = $(this).prop('checked');
-                $('.checkbox').prop('checked', isChecked);
-
-                if (isChecked) {
-                    $('.checkbox').each(function() {
-                        var value = $(this).val();
-                        if (!selectedItems.includes(value)) {
-                            selectedItems.push(value);
-                        }
-                    });
-                } else {
-                    selectedItems = [];
-                }
-
-                console.log(selectedItems);
-                handleCheck();
-            });
-
-            $('.checkbox').click(function() {
-                var isAllChecked = $('.checkbox:not(:checked)').length === 0;
-                $('#select-all').prop('checked', isAllChecked);
-
-                var isChecked = $(this).prop('checked');
-                var value = $(this).val();
-                if (isChecked && !selectedItems.includes(value)) {
-                    selectedItems.push(value);
-                } else if (!isChecked) {
-                    var index = selectedItems.indexOf(value);
-                    if (index !== -1) {
-                        selectedItems.splice(index, 1);
-                    }
-                }
-                console.log(selectedItems);
-                handleCheck();
-            });
-
-            $('#btn-submit-delete').on('click', function(e) {
-                e.preventDefault();
-                handleDelete();
-            });
-        });
-    </script>
 @endsection

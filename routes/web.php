@@ -152,7 +152,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::prefix('/profile')->group(function () {
         Route::get('/', [ProfileController::class, 'index'])->name('profile.index');
         // Route::get('/edit/{id}', [ProfileController::class, 'edit'])->name('order.edit');
-        Route::post('/edit/{id}', [ProfileController::class, 'update'])->name('profile.edit');
+        Route::post('/edit', [ProfileController::class, 'update'])->name('profile.edit');
     });
 });
 

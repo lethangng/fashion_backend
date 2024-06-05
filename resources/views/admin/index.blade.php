@@ -18,10 +18,7 @@
                     name: 'Đơn hàng',
                     data: {!! json_encode($thong_ke_order) !!}
                 },
-                {
-                    name: 'Người dùng',
-                    data: {!! json_encode($thong_ke_user) !!}
-                },
+
                 {
                     name: 'Sản phẩm',
                     data: {!! json_encode($thong_ke_product) !!}
