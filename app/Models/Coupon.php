@@ -18,7 +18,7 @@ class Coupon extends Model
         'code',
         'price',
         'for_sum',
-        'coupont_type',
+        'coupon_type',
         'expired',
         'description',
     ];

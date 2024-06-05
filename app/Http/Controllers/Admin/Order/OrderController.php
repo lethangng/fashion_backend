@@ -130,9 +130,34 @@ class OrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request)
     {
-        //
+        if (request()->ajax()) {
+            $ids = $request->id;
+            Order::whereIn('id', $ids)->delete();
+            toastr()->success('Xóa thành công!');
+            return response()->json($request->id);
+        }
+
+        // dd($request->all());
+        $validator = Validator::make($request->all(), [
+            'id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            toastr()->error('Thiếu thông tin.');
+            throw new ValidationException($validator);
+        } else {
+            try {
+                $order = Order::find($request->id);
+                $order->delete();
+                toastr()->success('Xóa thành công!');
+                return redirect()->route('order.index');
+            } catch (\Exception $e) {
+                dd($e);
+                toastr()->error('Xóa thất bại.');
+            }
+        }
     }
 
     public function statistical(int $year)

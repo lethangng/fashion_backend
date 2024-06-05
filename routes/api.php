@@ -1,14 +1,16 @@
 <?php
 
-use App\Http\Controllers\Api\BrandController;
-use App\Http\Controllers\Api\CategoryController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\Api\CartController;
+use App\Http\Controllers\Api\BrandController;
 // use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Auth\UserController;
 use App\Http\Controllers\Api\ProductController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\EvaluatesController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Api\DeliveryAddressController;
@@ -61,13 +63,18 @@ Route::prefix('/evaluates')->group(function () {
     Route::post('/add', [EvaluatesController::class, 'store'])->name('evaluates.create');
 });
 
+// DeliveryAddress
 Route::prefix('/delivery-address')->group(function () {
     Route::post('/add', [DeliveryAddressController::class, 'store']);
+    Route::get('/user/{user_id}', [DeliveryAddressController::class, 'index']);
+    Route::get('/show/{id}', [DeliveryAddressController::class, 'show']);
 });
 
 // Order
 Route::prefix('/order')->group(function () {
+    Route::get('/page/{page}/user/{user_id}/status/{status}', [OrderController::class, 'index']);
     Route::post('/add', [OrderController::class, 'store']);
+    Route::get('/detail/{id}', [OrderController::class, 'show']);
 });
 
 // Categories
@@ -75,14 +82,25 @@ Route::prefix('/categories')->group(function () {
     Route::get('/', [CategoryController::class, 'index']);
 });
 
-// Categories
+// Brands
 Route::prefix('/brands')->group(function () {
     Route::get('/', [BrandController::class, 'index']);
 });
 
+// Coupons
+Route::prefix('/coupons')->group(function () {
+    Route::get('/{page}', [CouponController::class, 'index']);
+});
+
+// Carts
+Route::prefix('/cart')->group(function () {
+    Route::get('/page/{page}/user/{user_id}', [CartController::class, 'index']);
+    Route::post('/add', [CartController::class, 'store']);
+});
+
 // Product
 Route::prefix('/product')->group(function () {
-    Route::get('/page/{page?}/user/{user_id?}', [ProductController::class, 'index']);
+    Route::get('/page/{page}/user/{user_id?}', [ProductController::class, 'index']);
     Route::get('/detail/{id}', [ProductController::class, 'show']);
     Route::get('/get-recommendations/{id}', [ProductController::class, 'getRecommendations']);
 });
