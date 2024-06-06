@@ -56,7 +56,13 @@ Route::prefix('/')->group(function () {
 
     Route::post('check-login', [UserController::class, 'checkLogin'])->name('checkLogin');
 
-    Route::get('reset-password', [UserController::class, 'resetPassword'])->name('reset-password');
+    Route::post('reset-password', [UserController::class, 'resetPassword'])->name('reset-password');
+
+    Route::post('verification-email', [UserController::class, 'verificationEmail']);
+
+    Route::post('change-email', [UserController::class, 'changeEmail']);
+
+    Route::post('change-password', [UserController::class, 'changePassword']);
 });
 
 Route::prefix('/evaluates')->group(function () {

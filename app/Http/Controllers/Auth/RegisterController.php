@@ -11,10 +11,10 @@ use Kreait\Laravel\Firebase\Facades\Firebase;
 
 class RegisterController extends Controller
 {
-    private $firebaseAuth;
+    private $auth;
     public function __construct()
     {
-        $this->firebaseAuth = Firebase::auth();
+        $this->auth = Firebase::auth();
     }
 
     public function register(Request $request)
@@ -26,42 +26,39 @@ class RegisterController extends Controller
             'password' => 'required|min:6|max:30',
         ]);
 
-        $data = [
-            'res' => 'error',
-            'msg' => 'Đăng ký thất bại',
-            'data' => [],
-        ];
-
         if ($validator->fails()) {
+            return response()->json([
+                'res' => 'error',
+                'msg' => 'Đăng ký thất bại',
+                'data' => [],
+            ], 200);
+        }
+        try {
+            $userProperties = [
+                'email' => $request->email,
+                'password' => $request->password,
+                'displayName' => $request->fullname,
+            ];
+
+            $createdUser = $this->auth->createUser($userProperties);
+
+            $request['u_id'] = $createdUser->uid;
+            // $password = Hash::make($request->password);
+            // $request['password'] = $password;
+            $request['role'] = 1;
+            $request['login_type'] = "password";
+
+            User::create($request->all());
+
+            $data = [
+                'res' => 'done',
+                'msg' => 'Đăng ký thành công',
+                'data' => $request->all(),
+            ];
+
             return response()->json($data);
-        } else {
-            try {
-                $userProperties = [
-                    'email' => $request->email,
-                    'password' => $request->password,
-                    'displayName' => $request->fullname,
-                ];
-
-                $createdUser = $this->firebaseAuth->createUser($userProperties);
-
-                $request['u_id'] = $createdUser->uid;
-                $password = Hash::make($request->password);
-                $request['password'] = $password;
-                $request['role'] = 1;
-                $request['login_type'] = "password";
-
-                User::create($request->all());
-
-                $data = [
-                    'res' => 'done',
-                    'msg' => 'Đăng ký thành công',
-                    'data' => $request->all(),
-                ];
-
-                return response()->json($data);
-            } catch (\Exception $e) {
-                return response()->json($e->getMessage());
-            }
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
         }
     }
 
@@ -72,22 +69,22 @@ class RegisterController extends Controller
             'u_id' => 'required',
             'email' => 'required|email',
             'login_type' => 'required',
-            // 'image' => 'required',
         ]);
 
-        $data = [
-            'res' => 'error',
-            'msg' => 'Đăng nhập thất bại',
-            'data' => [],
-        ];
-
         if ($validator->fails()) {
-            return response()->json($data);
-        } else {
-            $login_type = $request->login_type;
-            $email = $request->email;
+            return response()->json([
+                'res' => 'error',
+                'msg' => 'Đăng nhập thất bại',
+                'data' => [],
+            ], 200);
+        }
 
-            $user = User::where('email', $email)->where('login_type', $login_type)->first();
+        try {
+            // $login_type = $request->login_type;
+            $u_id = $request->u_id;
+
+            // $user = User::where('u_id', $u_id)->where('login_type', $login_type)->first();
+            $user = User::where('u_id', $u_id)->first();
             if ($user) {
                 $data = [
                     'res' => 'done',
@@ -106,6 +103,8 @@ class RegisterController extends Controller
 
                 return response()->json($data);
             }
+        } catch (\Exception $e) {
+            return response()->json($e->getMessage());
         }
     }
 }
