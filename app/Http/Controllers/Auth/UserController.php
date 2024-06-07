@@ -17,6 +17,39 @@ class UserController extends Controller
         $this->auth = Firebase::auth();
     }
 
+    public function userInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'u_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'res' => 'error',
+                'msg' => 'Thất bại',
+                'data' => [],
+            ], 200);
+        }
+
+        try {
+            $user = User::where('u_id', $request->u_id)->first();
+
+            $data = [
+                'res' => 'done',
+                'msg' => 'Cập nhập thành công',
+                'data' => $user,
+            ];
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json([
+                'res' => 'error',
+                'msg' => '',
+                'data' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function updateInfo(Request $request)
     {
         $validator = Validator::make($request->all(), [

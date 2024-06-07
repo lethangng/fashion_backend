@@ -81,7 +81,7 @@
 
                                     <div class="mt-4 text-center">
                                         <a href="{{ route('reset-password') }}" class="text-muted"><i
-                                                class="mdi mdi-lock me-1"></i> Forgot your password?</a>
+                                                class="mdi mdi-lock me-1"></i> Quên mật khẩu?</a>
                                     </div>
                                 </form>
                             </div>

@@ -54,7 +54,7 @@ Route::prefix('/')->group(function () {
 
     Route::post('update-info', [UserController::class, 'updateInfo'])->name('updateInfo');
 
-    Route::post('check-login', [UserController::class, 'checkLogin'])->name('checkLogin');
+    Route::post('check-login', [RegisterController::class, 'checkLogin'])->name('checkLogin');
 
     Route::post('reset-password', [UserController::class, 'resetPassword'])->name('reset-password');
 
@@ -63,6 +63,8 @@ Route::prefix('/')->group(function () {
     Route::post('change-email', [UserController::class, 'changeEmail']);
 
     Route::post('change-password', [UserController::class, 'changePassword']);
+
+    Route::post('user-info', [UserController::class, 'userInfo']);
 });
 
 Route::prefix('/evaluates')->group(function () {
@@ -72,13 +74,13 @@ Route::prefix('/evaluates')->group(function () {
 // DeliveryAddress
 Route::prefix('/delivery-address')->group(function () {
     Route::post('/add', [DeliveryAddressController::class, 'store']);
-    Route::get('/user/{user_id}', [DeliveryAddressController::class, 'index']);
+    Route::get('/user={user_id}', [DeliveryAddressController::class, 'index']);
     Route::get('/show/{id}', [DeliveryAddressController::class, 'show']);
 });
 
 // Order
 Route::prefix('/order')->group(function () {
-    Route::get('/page/{page}/user/{user_id}/status/{status}', [OrderController::class, 'index']);
+    Route::get('/page={page}&user={user_id}&status={status}', [OrderController::class, 'index']);
     Route::post('/add', [OrderController::class, 'store']);
     Route::get('/detail/{id}', [OrderController::class, 'show']);
 });
@@ -100,13 +102,14 @@ Route::prefix('/coupons')->group(function () {
 
 // Carts
 Route::prefix('/cart')->group(function () {
-    Route::get('/page/{page}/user/{user_id}', [CartController::class, 'index']);
+    Route::get('/page={page}&user={user_id}', [CartController::class, 'index']);
     Route::post('/add', [CartController::class, 'store']);
 });
 
 // Product
 Route::prefix('/product')->group(function () {
-    Route::get('/page/{page}/user/{user_id?}', [ProductController::class, 'index']);
+    // Route::get('?page={page}&user={user_id?}&limit={limit?}&new={new?}&sale={sale?}', [ProductController::class, 'index']);
+    Route::get('/', [ProductController::class, 'index']);
     Route::get('/detail/{id}', [ProductController::class, 'show']);
     Route::get('/get-recommendations/{id}', [ProductController::class, 'getRecommendations']);
 });

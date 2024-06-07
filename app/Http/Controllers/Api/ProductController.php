@@ -19,9 +19,23 @@ class ProductController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($page = 1, $user_id = 1)
+    public function index(Request $request)
     {
-        $products = Product::latest()->paginate(6, ['id', 'name', 'image', 'brand_id', 'status', 'newest'], 'page', $page);
+        // $page = 1, $user_id = 1, $limit = 6, $new = false, $sale = false
+        $page = $request->page ?? 1;
+        $limit = $request->limit ?? 6;
+        $newest = $request->newest ?? false;
+        $sale = $request->sale ?? false;
+        $user_id = $request->user_id ?? 1;
+
+        // return response()->json($request->all());
+        if ($newest) {
+            $products = Product::latest()->where('newest', 1)->paginate($limit, ['id', 'name', 'image', 'brand_id', 'status', 'newest'], 'page', $page);
+        } else if ($sale) {
+            $products = Product::latest()->whereNotNull('sell_off')->paginate($limit, ['id', 'name', 'image', 'brand_id', 'status', 'newest'], 'page', $page);
+        } else {
+            $products = Product::latest()->paginate($limit, ['id', 'name', 'image', 'brand_id', 'status', 'newest'], 'page', $page);
+        }
 
         $products = $products->map(function ($product) use ($user_id) {
             $productPrice = ProductPrice::where('product_id', $product->id)->latest()->first();

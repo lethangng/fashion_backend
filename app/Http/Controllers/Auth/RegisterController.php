@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Kreait\Laravel\Firebase\Facades\Firebase;
 
@@ -68,6 +67,8 @@ class RegisterController extends Controller
         $validator = Validator::make($request->all(), [
             'u_id' => 'required',
             'email' => 'required|email',
+            'fullname' => 'required',
+            'image' => 'required',
             'login_type' => 'required',
         ]);
 
@@ -89,7 +90,7 @@ class RegisterController extends Controller
                 $data = [
                     'res' => 'done',
                     'msg' => 'Cho phép đăng nhập',
-                    'data' => [],
+                    'data' => $user,
                 ];
                 return response()->json($data);
             } else {

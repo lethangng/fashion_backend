@@ -35,7 +35,7 @@
 
                             <div class="p-2">
                                 <div class="alert alert-success text-center mb-4" role="alert">
-                                    Enter your Email and instructions will be sent to you!
+                                    Nhập email của bạn và hướng dẫn sẽ được gửi!
                                 </div>
                                 <form class="form-horizontal"
                                     action="https://themesbrand.com/skote-cakephp/layouts/index.html">
