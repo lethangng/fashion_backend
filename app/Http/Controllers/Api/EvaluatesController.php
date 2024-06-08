@@ -76,4 +76,27 @@ class EvaluatesController extends Controller
     {
         //
     }
+
+    public static function countStar($productId)
+    {
+        $evaluate = Evaluate::where('product_id', $productId)->get();
+        $count = $evaluate->count();
+        if ($count == 0) {
+            return [
+                'count_evaluate' => 0,
+                'average_evaluate' => 0,
+            ];
+        }
+
+        $sum = 0;
+
+        foreach ($evaluate as $item) {
+            $sum += $item->star_number;
+        }
+
+        return [
+            'count_evaluate' => $count,
+            'average_evaluate' => floor($sum / $count),
+        ];
+    }
 }

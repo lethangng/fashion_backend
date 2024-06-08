@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\EvaluatesController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Api\DeliveryAddressController;
+use App\Http\Controllers\Api\FavoriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -71,6 +72,12 @@ Route::prefix('/evaluates')->group(function () {
     Route::post('/add', [EvaluatesController::class, 'store'])->name('evaluates.create');
 });
 
+// Favorite
+Route::prefix('/favorite')->group(function () {
+    Route::get('/', [FavoriteController::class, 'index']);
+    Route::post('/add', [FavoriteController::class, 'store']);
+});
+
 // DeliveryAddress
 Route::prefix('/delivery-address')->group(function () {
     Route::post('/add', [DeliveryAddressController::class, 'store']);
@@ -108,8 +115,7 @@ Route::prefix('/cart')->group(function () {
 
 // Product
 Route::prefix('/product')->group(function () {
-    // Route::get('?page={page}&user={user_id?}&limit={limit?}&new={new?}&sale={sale?}', [ProductController::class, 'index']);
     Route::get('/', [ProductController::class, 'index']);
-    Route::get('/detail/{id}', [ProductController::class, 'show']);
+    Route::get('/detail', [ProductController::class, 'show']);
     Route::get('/get-recommendations/{id}', [ProductController::class, 'getRecommendations']);
 });

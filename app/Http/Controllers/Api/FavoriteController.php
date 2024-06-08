@@ -14,9 +14,13 @@ class FavoriteController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($page, $user_id)
+    public function index(Request $request)
     {
-        $products = Favorite::latest()->where('user_id', $user_id)->paginate(4, ['id', 'product_id'], 'page', $page);
+        $page = $request->page ?? 1;
+        $user_id = $request->user_id ?? 1;
+        $limit = $request->limit ?? 4;
+
+        $products = Favorite::latest()->where('user_id', $user_id)->paginate($limit, ['id', 'product_id'], 'page', $page);
 
         $products = $products->map(function ($product) {
             $productPrice = ProductPrice::where('product_id', $product->id)->latest()->first();
