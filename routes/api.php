@@ -68,8 +68,10 @@ Route::prefix('/')->group(function () {
     Route::post('user-info', [UserController::class, 'userInfo']);
 });
 
+// Evaluates
 Route::prefix('/evaluates')->group(function () {
-    Route::post('/add', [EvaluatesController::class, 'store'])->name('evaluates.create');
+    Route::get('/', [EvaluatesController::class, 'index']);
+    Route::post('/add', [EvaluatesController::class, 'store']);
 });
 
 // Favorite
@@ -109,7 +111,7 @@ Route::prefix('/coupons')->group(function () {
 
 // Carts
 Route::prefix('/cart')->group(function () {
-    Route::get('/page={page}&user={user_id}', [CartController::class, 'index']);
+    Route::get('/', [CartController::class, 'index']);
     Route::post('/add', [CartController::class, 'store']);
 });
 

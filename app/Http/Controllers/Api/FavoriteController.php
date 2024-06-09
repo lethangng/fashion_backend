@@ -66,11 +66,24 @@ class FavoriteController extends Controller
             ]);
         } else {
             try {
+                $favarite = Favorite::where('product_id', $request->product_id)->where('user_id', $request->user_id)->first();
+                if ($favarite) {
+                    $favarite->delete();
+                    return response()->json([
+                        'res' => 'done',
+                        'msg' => 'Xóa khỏi yêu thích thành công',
+                        'data' => [
+                            'msg' => 'Xóa khỏi yêu thích thành công',
+                        ],
+                    ]);
+                }
                 Favorite::create($request->all());
                 $data = [
                     'res' => 'done',
                     'msg' => 'Thành công',
-                    'data' => [],
+                    'data' => [
+                        'msg' => 'Thêm vào yêu thích thành công.'
+                    ],
                 ];
                 return response()->json($data, 200);
             } catch (\Exception $e) {

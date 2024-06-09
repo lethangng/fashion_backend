@@ -13,10 +13,13 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\UploadController;
 use App\Models\OrderProduct;
 
-Product::generateRecommendations('similar_products');
-
 class ProductController extends Controller
 {
+    public function genRecomment()
+    {
+        Product::generateRecommendations('similar_products');
+    }
+
     /**
      * Display a listing of the resource.
      */

@@ -17,9 +17,13 @@ class CartController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($page, $user_id)
+    public function index(Request $request)
     {
-        $carts = Cart::latest()->where('user_id', $user_id)->paginate(4, ['id', 'product_id', 'extra_product', 'quantity'], 'page', $page);
+        $page = $request->page;
+        $user_id = $request->user_id;
+        $limit = $request->limit;
+
+        $carts = Cart::latest()->where('user_id', $user_id)->paginate($limit, ['*'], 'page', $page);
 
         $carts = $carts->map(function ($cart) {
             $product = Product::find($cart->product_id);
@@ -89,11 +93,44 @@ class CartController extends Controller
             ]);
         } else {
             try {
+                $extra_product = $request->extra_product;
+                $size_id_extra = json_decode($extra_product)->size;
+                $color_id_extra = json_decode($extra_product)->color;
+
+                $cart = Cart::where('product_id', $request->product_id)->where('user_id', $request->user_id)->first();
+
+                // return response()->json($extra_product);
+
+                if ($cart) {
+                    $size_id = json_decode($cart->extra_product)->size;
+                    $color_id = json_decode($cart->extra_product)->color;
+                    if ($size_id == $size_id_extra && $color_id == $color_id_extra) {
+                        return response()->json([
+                            'res' => 'done',
+                            'msg' => 'Thành công',
+                            'data' => [
+                                'msg' => 'Sản phẩm đã tồn tại trong giỏ hàng!',
+                            ],
+                        ]);
+                    } else {
+                        Cart::create($request->all());
+                        $data = [
+                            'res' => 'done',
+                            'msg' => 'Thành công',
+                            'data' => [
+                                'msg' => 'Thêm sản phẩm vào giỏ hàng thành công!'
+                            ],
+                        ];
+                        return response()->json($data, 200);
+                    }
+                }
                 Cart::create($request->all());
                 $data = [
                     'res' => 'done',
                     'msg' => 'Thành công',
-                    'data' => [],
+                    'data' => [
+                        'msg' => 'Thêm sản phẩm vào giỏ hàng thành công!'
+                    ],
                 ];
                 return response()->json($data, 200);
             } catch (\Exception $e) {

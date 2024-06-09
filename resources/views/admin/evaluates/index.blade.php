@@ -238,10 +238,10 @@
                                                             <input type="hidden" name="status"
                                                                 value="{{ $evaluate['status'] == 0 ? '1' : '0' }}">
                                                             <button
-                                                                class="btn {{ $evaluate['status'] == 0 ? 'btn-success' : 'btn-danger' }}  btn-sm"
+                                                                class="btn {{ $evaluate['status'] == 0 ? 'btn-danger' : 'btn-success' }}  btn-sm"
                                                                 type="submit">
                                                                 <i
-                                                                    class="fas {{ $evaluate['status'] == 0 ? 'fa-check' : 'fa-window-close' }}"></i>
+                                                                    class="fas {{ $evaluate['status'] == 0 ? 'fa-window-close' : 'fa-check' }}"></i>
                                                             </button>
                                                         </form>
                                                     </td>
