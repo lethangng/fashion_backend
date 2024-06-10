@@ -11,9 +11,11 @@ class CouponController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($page)
+    public function index(Request $request)
     {
-        $coupons = Coupon::latest()->simplePaginate(4, ['*'], 'page', $page);
+        $page = $request->page ?? 1;
+        $limit = $request->limit ?? 4;
+        $coupons = Coupon::latest()->simplePaginate($limit, ['*'], 'page', $page);
 
         $coupons = $coupons->map(function ($coupon) {
             return [
@@ -23,8 +25,8 @@ class CouponController extends Controller
                 'price' => $coupon->price,
                 'for_sum' => $coupon->for_sum,
                 'coupon_type' => $coupon->coupon_type,
-                'expired' => $coupon->expired,
-                'description' => $coupon->description,
+                'expired' => date('d/m/Y', strtotime($coupon->expired)),
+                'desc' => $coupon->description,
             ];
         });
 

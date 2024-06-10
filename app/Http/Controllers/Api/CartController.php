@@ -61,6 +61,7 @@ class CartController extends Controller
                 'color' => $color,
                 'sizes' => $sizes,
                 'colors' => $colors,
+                'quantity' => $cart->quantity,
             ];
         });
 
@@ -182,8 +183,10 @@ class CartController extends Controller
                 $cart->delete();
                 $data = [
                     'res' => 'done',
-                    'msg' => 'Thành công',
-                    'data' => [],
+                    'msg' => 'Xóa thành công',
+                    'data' => [
+                        'msg' => 'Xóa thành công'
+                    ],
                 ];
                 return response()->json($data, 200);
             } catch (\Exception $e) {

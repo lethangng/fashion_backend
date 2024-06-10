@@ -110,7 +110,7 @@ class ProductController extends Controller
             $size = Size::find($size);
             return [
                 'id' => $size->id,
-                'name' => $size->size,
+                'size' => $size->size,
             ];
         });
 
