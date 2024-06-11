@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
     public function run()
     {
         $user = new User();
-        $user->u_id = 'KKOAW8GqDRXGAvjPZ4biVrWpzho2';
+        // $user->u_id = 'KKOAW8GqDRXGAvjPZ4biVrWpzho2';
         $user->fullname = 'Admin';
         $user->email = 'admin@gmail.com';
         $user->password = Hash::make('123456');
@@ -45,7 +45,7 @@ class DatabaseSeeder extends Seeder
             $brand->save();
         }
 
-        $sizes = ['L', 'M', 'XL', 'S', '2XL'];
+        $sizes = ['S', 'M', 'L', 'XL', '2XL'];
 
         foreach ($sizes as $sizeName) {
             $size = new Size();
@@ -102,6 +102,8 @@ class DatabaseSeeder extends Seeder
         $deliveryAddress = new DeliveryAddress();
         $deliveryAddress->user_id = 1;
         $deliveryAddress->city = 'Hà Nội';
+        $deliveryAddress->fullname = 'Lê Ngọc Thắng';
+        $deliveryAddress->phone_number = '0987654321';
         $deliveryAddress->address = 'ĐH.Thủy Lợi';
         $deliveryAddress->save();
     }

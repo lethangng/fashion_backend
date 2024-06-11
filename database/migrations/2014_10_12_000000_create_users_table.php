@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email');
             $table->string('password')->nullable();
             $table->boolean('role')->nullable()->comment('0 = admin || 1 = user');
+            $table->boolean('status')->default(1)->comment('0 = chặn || 1 = hoạt động');
             $table->string('login_type')->nullable()->comment('password || facebook || google');
             $table->timestamp('email_verified_at')->nullable();
             $table->rememberToken();

@@ -8,6 +8,7 @@ use Kreait\Firebase\Auth\UserQuery;
 // use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\Controller;
 // use Kreait\Laravel\Firebase\Facades\Firebase;
+use App\Http\Controllers\UploadController;
 use Kreait\Firebase\Exception\AuthException;
 use Kreait\Firebase\Exception\Auth\UserNotFound;
 
@@ -27,33 +28,60 @@ class UserController extends Controller
         return iterator_count($users);
     }
 
-    public function index()
+    public function index($page = 1)
     {
-        $userQuery = [
-            'sortBy' => UserQuery::FIELD_CREATED_AT,
-            'order' => UserQuery::ORDER_DESC,
-            // 'order' => UserQuery::ORDER_DESC # this is the default
-            'offset' => 0,
-            'limit' => 20, # The maximum supported limit is 500
-        ];
+        // $userQuery = [
+        //     'sortBy' => UserQuery::FIELD_CREATED_AT,
+        //     'order' => UserQuery::ORDER_DESC,
+        //     // 'order' => UserQuery::ORDER_DESC # this is the default
+        //     'offset' => 0,
+        //     'limit' => 20, # The maximum supported limit is 500
+        // ];
 
-        $users = $this->firebaseAuth->queryUsers($userQuery);
-        // dd($users);
+        // $users = $this->firebaseAuth->queryUsers($userQuery);
+        // // dd($users);
 
-        $users = collect($users)->values()->map(function ($user) {
-            return (object) [
-                'uid' => $user->uid,
-                'fullname' => $user->displayName,
-                'email' =>  $user->email ?? $user->providerData[0]->email ?? $user->providerData[1]->email,
-                'phone_nummber' => $user->phoneNumber,
-                'disabled' => $user->disabled,
-                // 'emailVerified' => $user->emailVerified,
-                'providerId' => $user->providerData[0]->providerId,
+        // $users = collect($users)->values()->map(function ($user) {
+        //     return (object) [
+        //         'uid' => $user->uid,
+        //         'fullname' => $user->displayName,
+        //         'email' =>  $user->email ?? $user->providerData[0]->email ?? $user->providerData[1]->email,
+        //         'phone_nummber' => $user->phoneNumber,
+        //         'disabled' => $user->disabled,
+        //         // 'emailVerified' => $user->emailVerified,
+        //         'providerId' => $user->providerData[0]->providerId,
+        //     ];
+        // })->toArray();
+
+
+        // return view('admin.users.index', compact('users'));
+
+        $users = User::latest()->paginate(20, ['*'], 'page', $page);
+
+        $total_pages = $users->lastPage();
+        $current_page = $users->currentPage();
+
+        // dd($current_page);
+
+        $firebaseStorage = new UploadController();
+
+        $users = $users->map(function ($user) use ($firebaseStorage) {
+            $imageUrl = $firebaseStorage->getImage($user->image);
+            // dd($user);
+
+            return [
+                'id' => $user->id,
+                'fullname' => $user->fullname,
+                'email' => $user->email,
+                'phone_number' => $user->phone_number,
+                'login_type' => $user->login_type,
+                'u_id' => $user->u_id,
+                'image_url' => $imageUrl,
+                'status' => $user->status,
             ];
-        })->toArray();
+        });
 
-
-        return view('admin.users.index', compact('users'));
+        return view('admin.users.index', compact('users', 'total_pages', 'current_page'));
     }
 
     public function destroy(Request $request)

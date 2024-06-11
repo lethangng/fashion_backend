@@ -201,7 +201,7 @@
                                         <tbody>
                                             @foreach ($users as $user)
                                                 {{-- Bỏ quan tài khoản admin --}}
-                                                @if ($user->email == Auth::user()->email)
+                                                @if ($user['email'] == Auth::user()->email)
                                                     @continue
                                                 @endif
 
@@ -209,7 +209,7 @@
                                                     <td>
                                                         <div class="form-check font-size-16">
                                                             <input class="form-check-input checkbox" type="checkbox"
-                                                                id="{{ $user->uid }}" value="{{ $user->uid }}">
+                                                                id="{{ $user['u_id'] }}" value="{{ $user['u_id'] }}">
                                                             {{-- <label class="form-check-label"
                                                                 for="transactionCheck02"></label> --}}
                                                         </div>
@@ -217,24 +217,24 @@
 
                                                     {{-- <td>{{ ++$i }}</td> --}}
                                                     {{-- <td>
-                                                        {{ $user->uid }}
+                                                        {{ $user['u_id'] }}
                                                     </td> --}}
                                                     <td>
-                                                        {{ $user->fullname }}
+                                                        {{ $user['fullname'] }}
                                                     </td>
                                                     <td>
-                                                        {{ $user->email }}
+                                                        {{ $user['email'] }}
                                                     </td>
                                                     <td>
-                                                        {{ $user->phone_nummber }}
+                                                        {{ $user['phone_number'] }}
                                                     </td>
 
                                                     <td>
-                                                        @if ($user->providerId == 'password' || $user->providerId == 'phone')
+                                                        @if ($user['login_type'] == 'password')
                                                             <i class="bx bx-envelope fa-2x"></i>
-                                                        @elseif ($user->providerId == 'facebook.com')
+                                                        @elseif ($user['login_type'] == 'facebook')
                                                             <i class="fab fa-facebook-square fa-2x"></i>
-                                                        @elseif ($user->providerId == 'google.com')
+                                                        @elseif ($user['login_type'] == 'google')
                                                             <i class="fab fa-google fa-2x"></i>
                                                         @endif
                                                     </td>
@@ -242,21 +242,21 @@
                                                         <form action="{{ route('user.disable') }}" method="POST">
                                                             @csrf
                                                             <input type="hidden" name="u_id"
-                                                                value="{{ $user->uid }}">
+                                                                value="{{ $user['u_id'] }}">
                                                             <input type="hidden" name="type"
-                                                                value="{{ $user->disabled ? 'Enable' : 'Disable' }}">
+                                                                value="{{ $user['status'] == 0 ? 'Enable' : 'Disable' }}">
                                                             <button
-                                                                class="btn {{ $user->disabled ? 'btn-danger' : 'btn-success' }}  btn-sm"
+                                                                class="btn {{ $user['status'] == 0 ? 'btn-danger' : 'btn-success' }}  btn-sm"
                                                                 type="submit">
                                                                 <i
-                                                                    class="fas {{ $user->disabled ? 'fa-window-close' : 'fa-check' }}"></i>
+                                                                    class="fas {{ $user['status'] == 0 ? 'fa-window-close' : 'fa-check' }}"></i>
                                                             </button>
                                                         </form>
-                                                        {{-- @if ($user->disabled)
+                                                        {{-- @if ($user['status'] == 0)
                                                             <form action="{{ route('user.disable') }}" method="POST">
                                                                 @csrf
                                                                 <input type="hidden" name="u_id"
-                                                                    value="{{ $user->uid }}">
+                                                                    value="{{ $user['u_id'] }}">
                                                                 <input type="hidden" name="type" value="Enable">
                                                                 <button class="btn btn-danger btn-sm" type="submit">
                                                                     <i class="fas fa-window-close"></i>
@@ -266,7 +266,7 @@
                                                             <form action="{{ route('user.disable') }}" method="POST">
                                                                 @csrf
                                                                 <input type="hidden" name="u_id"
-                                                                    value="{{ $user->uid }}">
+                                                                    value="{{ $user['u_id'] }}">
                                                                 <input type="hidden" name="type" value="Disable">
                                                                 <button class="btn btn-success btn-sm" type="submit">
                                                                     <i class="fas fa-check"></i>
@@ -276,19 +276,19 @@
                                                     </td>
                                                     <form action="{{ route('user.delete') }}" method="POST">
                                                         @csrf
-                                                        <input type="hidden" name="u_id" value="{{ $user->uid }}">
+                                                        <input type="hidden" name="u_id" value="{{ $user['u_id'] }}">
 
                                                         <td class="text-center">
                                                             <button type="button" class="btn btn-danger btn-sm"
                                                                 data-bs-toggle="modal"
-                                                                data-bs-target="#exampleModal{{ $user->uid }}"
+                                                                data-bs-target="#exampleModal{{ $user['u_id'] }}"
                                                                 data-bs-whatever="@mdo">
 
                                                                 <span class="icon-status node-delete-53">
                                                                     <i class="fas fa-trash"></i>
                                                                 </span>
                                                             </button>
-                                                            <div class="modal fade" id="exampleModal{{ $user->uid }}"
+                                                            <div class="modal fade" id="exampleModal{{ $user['u_id'] }}"
                                                                 tabindex="-1" aria-labelledby="exampleModalLabel"
                                                                 aria-hidden="true">
                                                                 <div class="modal-dialog">
@@ -325,13 +325,36 @@
                                         </tbody>
                                     </table>
                                 </div>
-                                {{-- {!! $users->links() !!} --}}
+
                                 <!-- end table-responsive -->
                             </div>
                         </div>
                     </div>
                 </div>
 
+                <div class="row">
+                    <div class="col-lg-12">
+                        <ul class="pagination pagination-rounded justify-content-center mt-1 mb-4 pb-1">
+                            @for ($i = 1; $i < $total_pages + 1; $i++)
+                                <li @class(['page-item', 'disabled' => $current_page == 1])>
+                                    <a href="{{ route('user.index', $i - 1) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-left"></i>
+                                    </a>
+                                </li>
+
+                                <li @class(['page-item', 'active' => $i == $current_page])>
+                                    <a href="{{ route('user.index', $i) }}" class="page-link">{{ $i }}</a>
+                                </li>
+
+                                <li @class(['page-item', 'disabled' => $current_page == $total_pages])>
+                                    <a href="{{ route('user.index', $i + 1) }}" class="page-link"><i
+                                            class="mdi mdi-chevron-right"></i>
+                                    </a>
+                                </li>
+                            @endfor
+                        </ul>
+                    </div>
+                </div>
 
                 <!-- end row -->
 

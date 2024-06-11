@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Product;
 use App\Models\Favorite;
 use App\Models\ProductPrice;
 use Illuminate\Http\Request;
@@ -20,11 +21,19 @@ class FavoriteController extends Controller
         $user_id = $request->user_id ?? 1;
         $limit = $request->limit ?? 4;
 
-        $products = Favorite::latest()->where('user_id', $user_id)->paginate($limit, ['id', 'product_id'], 'page', $page);
+        $favorites = Favorite::latest()->where('user_id', $user_id)->paginate($limit, ['id', 'product_id'], 'page', $page);
 
-        $products = $products->map(function ($product) {
-            $productPrice = ProductPrice::where('product_id', $product->id)->latest()->first();
-            $imageUrl = (new UploadController())->getImage($product->image);
+        $firebaseStorage = new UploadController();
+
+        // dd($favorites);
+
+        $favorites = $favorites->map(function ($favorite) use ($firebaseStorage) {
+            $product = Product::find($favorite->product_id);
+            $productPrice = ProductPrice::where('product_id', $favorite->product_id)->latest()->first();
+            // dd($product);
+            $imageUrl = $firebaseStorage->getImage($product->image);
+
+            $evaluate = EvaluatesController::countStar($product->id);
 
             return [
                 'id' => $product->id,
@@ -36,13 +45,15 @@ class FavoriteController extends Controller
                 'price_off' => $productPrice->price_off,
                 'price' => $productPrice->price,
                 'image_url' => $imageUrl,
+                'favorite' => true,
+                ...$evaluate,
             ];
         });
 
         $data = [
             'res' => 'done',
             'msg' => '',
-            'data' => $products,
+            'data' => $favorites,
         ];
 
         return response()->json($data, 200);
@@ -66,9 +77,9 @@ class FavoriteController extends Controller
             ]);
         } else {
             try {
-                $favarite = Favorite::where('product_id', $request->product_id)->where('user_id', $request->user_id)->first();
-                if ($favarite) {
-                    $favarite->delete();
+                $favorite = Favorite::where('product_id', $request->product_id)->where('user_id', $request->user_id)->first();
+                if ($favorite) {
+                    $favorite->delete();
                     return response()->json([
                         'res' => 'done',
                         'msg' => 'Xóa khỏi yêu thích thành công',
@@ -131,8 +142,8 @@ class FavoriteController extends Controller
             ]);
         } else {
             try {
-                $favarite = Favorite::find($request->id);
-                $favarite->delete();
+                $favorite = Favorite::find($request->id);
+                $favorite->delete();
                 $data = [
                     'res' => 'done',
                     'msg' => 'Thành công',

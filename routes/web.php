@@ -87,7 +87,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     // Users
     Route::prefix('/user')->group(function () {
-        Route::get('/', [UserController::class, 'index'])->name('user.index');
+        Route::get('/page/{page?}', [UserController::class, 'index'])->name('user.index');
         // Route::get('/add', [UserController::class, 'create'])->name('category.create');
         // Route::post('/add', [UserController::class, 'store']);
         Route::post('/delete', [UserController::class, 'destroy'])->name('user.delete');

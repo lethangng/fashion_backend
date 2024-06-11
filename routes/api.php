@@ -64,8 +64,8 @@ Route::prefix('/favorite')->group(function () {
 
 // DeliveryAddress
 Route::prefix('/delivery-address')->group(function () {
+    Route::get('/', [DeliveryAddressController::class, 'index']);
     Route::post('/add', [DeliveryAddressController::class, 'store']);
-    Route::get('/user={user_id}', [DeliveryAddressController::class, 'index']);
     Route::get('/show/{id}', [DeliveryAddressController::class, 'show']);
 });
 

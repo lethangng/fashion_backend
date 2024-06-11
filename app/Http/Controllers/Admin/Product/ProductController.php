@@ -39,7 +39,6 @@ class ProductController extends Controller
                 'name' => $product->name,
                 'import_price' => $product->import_price,
                 'category_name' => $categoryName,
-                // 'import_price' => $product->import_price,
                 'image_url' => $imageUrl,
             ];
         });
@@ -181,7 +180,7 @@ class ProductController extends Controller
         });
 
         // dd($image_url);
-        // dd($product->description);
+        // dd($list_image_url);
         return view('admin.products.edit', compact('categories', 'brands', 'colors', 'sizes', 'product', 'image_url', 'list_image_url'));
     }
 

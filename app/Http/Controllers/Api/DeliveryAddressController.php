@@ -12,9 +12,15 @@ class DeliveryAddressController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index($user_id)
+    public function index(Request $request)
     {
-        $deliveryAddress = DeliveryAddress::where('user_id', $user_id)->latest()->select(['id', 'city', 'address', 'is_select'])->get();
+        $user_id = $request->user_id;
+        $is_select = $request->is_select;
+        if ($is_select) {
+            $deliveryAddress = DeliveryAddress::where('user_id', $user_id)->where('is_select', 1)->select(['id', 'city', 'address', 'is_select', 'fullname', 'phone_number'])->first();
+        } else {
+            $deliveryAddress = DeliveryAddress::where('user_id', $user_id)->latest()->select(['id', 'city', 'address', 'is_select', 'fullname', 'phone_number'])->get();
+        }
 
         $data = [
             'res' => 'done',
@@ -34,6 +40,8 @@ class DeliveryAddressController extends Controller
             'user_id' => 'required',
             'city' => 'required',
             'address' => 'required',
+            'fullname' => 'required',
+            'phone_number' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -52,12 +60,17 @@ class DeliveryAddressController extends Controller
                         'data' => [],
                     ]);
                 }
+                if ($count == 0) {
+                    $request['is_select'] = 1;
+                }
 
                 $delivery_address = DeliveryAddress::create($request->all());
                 return response()->json([
                     'res' => 'done',
                     'msg' => 'Thành công',
-                    'data' => $delivery_address,
+                    'data' => [
+                        'msg' => 'Thêm địa chỉ giao hàng thành công'
+                    ],
                 ]);
             } catch (\Exception $e) {
                 return response()->json([

@@ -60,11 +60,11 @@
             dictFileTooBig: 'Vui lòng chọn hình ảnh dưới 1 MB',
 
             init: function() {
-                var imageUrl = {!! $image_url !!};
-                // console.log(imageUrl['image_name'].split('/').pop());
-
+                var imageUrl = '{!! $image_url !!}';
+                // console.log(JSON.parse(imageUrl));
+                // imageUrl = JSON.parse(imageUrl);
+                console.log(imageUrl['image_url']);
                 var mockFile = {
-                    // name: imageUrl['image_name'].split('/').pop(),
                     name: imageUrl['image_name'],
                     size: 1024,
                     type: 'image/*',

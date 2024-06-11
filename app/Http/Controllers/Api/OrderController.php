@@ -106,7 +106,10 @@ class OrderController extends Controller
                 return response()->json([
                     'res' => 'done',
                     'msg' => 'Thành công',
-                    'data' => $order,
+                    // 'data' => $order,
+                    'data' => [
+                        'msg' => 'Đặt hàng thành công',
+                    ]
                 ]);
             } catch (\Exception $e) {
                 return response()->json([
