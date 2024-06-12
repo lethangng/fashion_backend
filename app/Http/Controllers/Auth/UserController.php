@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Controllers\UploadController;
 use Kreait\Laravel\Firebase\Facades\Firebase;
 
 class UserController extends Controller
@@ -34,6 +35,80 @@ class UserController extends Controller
         try {
             $user = User::where('u_id', $request->u_id)->first();
 
+            $validator = Validator::make(['image' => $user->image], [
+                'image' => 'url',
+            ]);
+
+            // Kiểm tra xem image lưu trong CSDL có phải là 1 URL không
+            if ($validator->fails()) {
+                $firebaseStorage = new UploadController();
+                $imageUrl = $firebaseStorage->getImage($user->image);
+                $user['image'] = $imageUrl;
+            }
+
+            $data = [
+                'res' => 'done',
+                'msg' => 'Cập nhập thành công',
+                'data' => $user,
+            ];
+
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json([
+                'res' => 'error',
+                'msg' => '',
+                'data' => $e->getMessage(),
+            ]);
+        }
+    }
+
+    public function updateInfo(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'user_id' => 'required',
+            // 'u_id' => 'required',
+            'fullname' => 'required|min:10|max:30',
+            'phone_number' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'res' => 'error',
+                'msg' => 'Cập nhập thất bại',
+                'data' => [],
+            ], 200);
+        }
+
+        try {
+            // $userProperties = [
+            //     'phoneNumber' => '+84' . substr($request->phone_number, 1),
+            //     'displayName' => $request->fullname,
+            // ];
+
+            // $this->auth->updateUser($request->u_id, $userProperties);
+
+            // $user = User::where('u_id', $request->u_id)->first();
+            $data = [
+                'phone_number' => $request->phone_number,
+                'fullname' => $request->fullname,
+            ];
+
+            if ($request->image) {
+                $data['image'] = $request->image;
+            }
+
+            $user = User::find($request->user_id);
+            $user->update($data);
+
+            $firebaseStorage = new UploadController();
+            $imageUrl = $firebaseStorage->getImage($user->image);
+
+            // $user = User::find($request->user_id);
+            $user['image'] = $imageUrl;
+            $user['phone_number'] = $request->phone_number;
+            $user['fullname'] = $request->fullname;
+
             $data = [
                 'res' => 'done',
                 'msg' => 'Cập nhập thành công',
@@ -50,47 +125,32 @@ class UserController extends Controller
         }
     }
 
-    public function updateInfo(Request $request)
+    public function uploadImage(Request $request)
     {
-        $validator = Validator::make($request->all(), [
-            'u_id' => 'required',
-            'fullname' => 'required|min:10|max:30',
-            'phone_number' => 'required|size:10',
-        ]);
-
-        if ($validator->fails()) {
+        if (!$request->hasFile('file')) {
             return response()->json([
                 'res' => 'error',
-                'msg' => 'Cập nhập thất bại',
+                'mes' => 'Vui lòng chọn file',
                 'data' => [],
-            ], 200);
+            ]);
         }
 
         try {
-            $userProperties = [
-                'phoneNumber' => '+84' . substr($request->phone_number, 1),
-                'displayName' => $request->fullname,
-            ];
+            $image = $request->file('file');
+            $firebaseStorage = new UploadController();
+            $firebase_storage_path = 'images/';
 
-            $this->auth->updateUser($request->u_id, $userProperties);
+            $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
 
-            $user = User::where('u_id', $request->u_id)->first();
-            $user->update([
-                'phone_number' => $request->phone_number,
-                'fullname' => $request->fullname,
-            ]);
-
-            $data = [
+            return response()->json([
                 'res' => 'done',
-                'msg' => 'Cập nhập thành công',
-                'data' => $request->all(),
-            ];
-
-            return response()->json($data);
+                'msg' => '',
+                'data' => $downloadUrl,
+            ]);
         } catch (\Exception $e) {
             return response()->json([
                 'res' => 'error',
-                'msg' => '',
+                'mes' => 'Upload thất bại.',
                 'data' => $e->getMessage(),
             ]);
         }

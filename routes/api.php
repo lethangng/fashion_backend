@@ -32,22 +32,24 @@ use App\Http\Controllers\Api\FavoriteController;
 // });
 
 // Auth
-Route::prefix('/')->group(function () {
-    Route::post('register', [RegisterController::class, 'register'])->name('register.create');
+Route::prefix('/user')->group(function () {
+    Route::post('/register', [RegisterController::class, 'register'])->name('register.create');
 
-    Route::post('update-info', [UserController::class, 'updateInfo'])->name('updateInfo');
+    Route::post('/update-info', [UserController::class, 'updateInfo']);
 
-    Route::post('check-login', [RegisterController::class, 'checkLogin'])->name('checkLogin');
+    Route::post('/upload-image', [UserController::class, 'uploadImage']);
 
-    Route::post('reset-password', [UserController::class, 'resetPassword'])->name('reset-password');
+    Route::post('/check-login', [RegisterController::class, 'checkLogin'])->name('checkLogin');
 
-    Route::post('verification-email', [UserController::class, 'verificationEmail']);
+    Route::post('/reset-password', [UserController::class, 'resetPassword'])->name('reset-password');
 
-    Route::post('change-email', [UserController::class, 'changeEmail']);
+    Route::post('/verification-email', [UserController::class, 'verificationEmail']);
 
-    Route::post('change-password', [UserController::class, 'changePassword']);
+    Route::post('/change-email', [UserController::class, 'changeEmail']);
 
-    Route::post('user-info', [UserController::class, 'userInfo']);
+    Route::post('/change-password', [UserController::class, 'changePassword']);
+
+    Route::post('/user-info', [UserController::class, 'userInfo']);
 });
 
 // Evaluates
