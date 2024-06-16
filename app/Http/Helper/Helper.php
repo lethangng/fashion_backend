@@ -2,6 +2,8 @@
 
 namespace App\Http\Helper;
 
+use Illuminate\Support\Str;
+
 class Helper
 {
     public static function colorNameToHex($color_name)
@@ -163,5 +165,45 @@ class Helper
         } else {
             return ($color_name);
         }
+    }
+
+    public static function convertColor($color)
+    {
+        $color_value = "";
+        if (Str::startsWith($color, 'rgba(')) {
+            preg_match_all("/([\\d.]+)/", $color, $matches);
+            $color_value = sprintf("#%02x%02x%02x", $matches[1][0], $matches[1][1], $matches[1][2]);
+        } else {
+            $color_value = Helper::colorNameToHex($color) . '';
+        }
+        return $color_value;
+    }
+
+    public static function statusTitle($status)
+    {
+        $value = '';
+        switch ($status) {
+            case 0:
+                $value = 'Mới tiếp nhận';
+                break;
+            case 1:
+                $value = 'Đang xử lý';
+                break;
+            case 2:
+                $value = 'Chuyển qua kho đóng gói';
+                break;
+            case 3:
+                $value = 'Đang giao hàng';
+                break;
+            case 4:
+                $value = 'Hoàn tất';
+                break;
+            case 5:
+                $value = 'Đã hủy';
+                break;
+            default:
+                $value = 'Đã hủy';
+        }
+        return $value;
     }
 }

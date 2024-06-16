@@ -4,17 +4,19 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Api\CartController;
-use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\SizeController;
 // use App\Http\Controllers\ProductController;
+use App\Http\Controllers\Api\BrandController;
+use App\Http\Controllers\Api\ColorController;
 use App\Http\Controllers\Api\OrderController;
 use App\Http\Controllers\Auth\UserController;
+use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\CouponController;
+use App\Http\Controllers\Api\FavoriteController;
 use App\Http\Controllers\Api\EvaluatesController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Api\DeliveryAddressController;
-use App\Http\Controllers\Api\FavoriteController;
 
 /*
 |--------------------------------------------------------------------------
@@ -26,10 +28,6 @@ use App\Http\Controllers\Api\FavoriteController;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });
 
 // Auth
 Route::prefix('/user')->group(function () {
@@ -50,6 +48,8 @@ Route::prefix('/user')->group(function () {
     Route::post('/change-password', [UserController::class, 'changePassword']);
 
     Route::post('/user-info', [UserController::class, 'userInfo']);
+
+    Route::post('/app-data', [UserController::class, 'appData']);
 });
 
 // Evaluates
@@ -68,14 +68,27 @@ Route::prefix('/favorite')->group(function () {
 Route::prefix('/delivery-address')->group(function () {
     Route::get('/', [DeliveryAddressController::class, 'index']);
     Route::post('/add', [DeliveryAddressController::class, 'store']);
+    Route::post('/update', [DeliveryAddressController::class, 'update']);
     Route::get('/show/{id}', [DeliveryAddressController::class, 'show']);
+});
+
+// Size
+Route::prefix('/size')->group(function () {
+    Route::get('/', [SizeController::class, 'index']);
+});
+
+// Color
+Route::prefix('/color')->group(function () {
+    Route::get('/', [ColorController::class, 'index']);
 });
 
 // Order
 Route::prefix('/order')->group(function () {
-    Route::get('/page={page}&user={user_id}&status={status}', [OrderController::class, 'index']);
+    Route::get('/', [OrderController::class, 'index']);
     Route::post('/add', [OrderController::class, 'store']);
-    Route::get('/detail/{id}', [OrderController::class, 'show']);
+    Route::get('/detail', [OrderController::class, 'show']);
+    Route::post('/update', [OrderController::class, 'update']);
+    Route::post('/cancel', [OrderController::class, 'cancel']);
 });
 
 // Categories
@@ -104,5 +117,6 @@ Route::prefix('/cart')->group(function () {
 Route::prefix('/product')->group(function () {
     Route::get('/', [ProductController::class, 'index']);
     Route::get('/detail', [ProductController::class, 'show']);
-    Route::get('/get-recommendations/{id}', [ProductController::class, 'getRecommendations']);
+    Route::get('/get-recommendations', [ProductController::class, 'getRecommendations']);
+    Route::get('/filter', [ProductController::class, 'filter']);
 });

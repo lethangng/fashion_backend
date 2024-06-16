@@ -4,8 +4,6 @@ namespace App\Http\Controllers\Admin\Color;
 
 use App\Models\Color;
 use Illuminate\View\View;
-use App\Http\Helper\Helper;
-use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\RedirectResponse;
@@ -44,18 +42,7 @@ class ColorController extends Controller
         if ($validator->fails()) {
             throw new ValidationException($validator);
         } else {
-            $color = "";
-            if (Str::startsWith($request->color, 'rgba(')) {
-                // $rgba = "rgba(118, 165, 175, 0.611)";
-                preg_match_all("/([\\d.]+)/", $request->color, $matches);
-                $color = sprintf("#%02x%02x%02x%02x", $matches[1][0], $matches[1][1], $matches[1][2], $matches[1][3] * 255);
-            } else {
-                $color = Helper::colorNameToHex($request->color) . 'FF';
-            }
 
-            // dd($color);
-
-            $request['color'] = $color;
             $color = Color::create($request->all());
 
             if ($color instanceof Color) {
@@ -97,17 +84,6 @@ class ColorController extends Controller
         ]);
 
         $color = Color::find($request->id);
-
-        $color_value = "";
-        if (Str::startsWith($request->color, 'rgba(')) {
-            preg_match_all("/([\\d.]+)/", $request->color, $matches);
-            $color_value = sprintf("#%02x%02x%02x%02x", $matches[1][0], $matches[1][1], $matches[1][2], $matches[1][3] * 255);
-        } else {
-            $color_value = Helper::colorNameToHex($request->color) . 'FF';
-        }
-
-        $request['color'] = $color_value;
-
         $color->update($request->all());
 
         toastr()->success('Sửa thành công!');

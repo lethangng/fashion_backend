@@ -18,7 +18,7 @@ return new class extends Migration
             $table->integer('star_number')->default(0);
             $table->text('content')->nullable();
             $table->text('images')->nullable()->comment('List image của đánh giá');
-            $table->boolean('status')->nullable()->comment('false = ẩn || true=hiện');
+            $table->boolean('status')->default(0)->comment('false = ẩn || true=hiện');
             $table->timestamps();
         });
     }

@@ -101,7 +101,7 @@ class DatabaseSeeder extends Seeder
 
         $deliveryAddress = new DeliveryAddress();
         $deliveryAddress->user_id = 1;
-        $deliveryAddress->city = 'Hà Nội';
+        // $deliveryAddress->city = 'Hà Nội';
         $deliveryAddress->fullname = 'Lê Ngọc Thắng';
         $deliveryAddress->phone_number = '0987654321';
         $deliveryAddress->address = 'ĐH.Thủy Lợi';

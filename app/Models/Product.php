@@ -20,9 +20,9 @@ class Product extends Model implements InteractWithRecommendation
         'brand_id',
         'status',
         'newest',
-        'sell_off',
+        // 'sell_off',
         'image',
-        'price_off',
+        // 'price_off',
         'list_images',
         'colors',
         'sizes',
@@ -88,5 +88,10 @@ class Product extends Model implements InteractWithRecommendation
     public function brand()
     {
         return $this->hasOne(Brand::class, 'id');
+    }
+
+    public function productPrice()
+    {
+        return $this->hasMany(ProductPrice::class, 'product_id');
     }
 }

@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('fullname')->nullable()->comment('Tên người nhận');
             $table->string('phone_number')->nullable()->comment('Số điện thoại người nhận');
             $table->string('city')->nullable()->comment('Tinh/Thanh pho');
-            $table->string('address')->nullable()->comment('Vi tri cu the');
+            $table->string('address')->nullable()->comment('Vi tri');
             $table->boolean('is_select')->default(0)->comment('Dia chi mac dinh');
             $table->timestamps();
         });

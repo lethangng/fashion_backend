@@ -17,9 +17,9 @@ class DeliveryAddressController extends Controller
         $user_id = $request->user_id;
         $is_select = $request->is_select;
         if ($is_select) {
-            $deliveryAddress = DeliveryAddress::where('user_id', $user_id)->where('is_select', 1)->select(['id', 'city', 'address', 'is_select', 'fullname', 'phone_number'])->first();
+            $deliveryAddress = DeliveryAddress::where('user_id', $user_id)->where('is_select', 1)->select(['id', 'address', 'is_select', 'fullname', 'phone_number'])->first();
         } else {
-            $deliveryAddress = DeliveryAddress::where('user_id', $user_id)->latest()->select(['id', 'city', 'address', 'is_select', 'fullname', 'phone_number'])->get();
+            $deliveryAddress = DeliveryAddress::where('user_id', $user_id)->latest()->select(['id', 'address', 'is_select', 'fullname', 'phone_number'])->get();
         }
 
         $data = [
@@ -38,7 +38,7 @@ class DeliveryAddressController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
-            'city' => 'required',
+            // 'city' => 'required',
             'address' => 'required',
             'fullname' => 'required',
             'phone_number' => 'required',
@@ -87,7 +87,7 @@ class DeliveryAddressController extends Controller
      */
     public function show(string $id)
     {
-        $deliveryAddress = DeliveryAddress::find($id)->only('id', 'city', 'address', 'is_select');
+        $deliveryAddress = DeliveryAddress::find($id)->only('id', 'address', 'is_select');
         $data = [
             'res' => 'done',
             'msg' => '',
@@ -104,8 +104,10 @@ class DeliveryAddressController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'id' => 'required',
-            'city' => 'required',
+            // 'city' => 'required',
             'address' => 'required',
+            'fullname' => 'required',
+            'phone_number' => 'required',
             'is_select' => 'required',
         ]);
 
@@ -117,16 +119,29 @@ class DeliveryAddressController extends Controller
             ]);
         } else {
             try {
-                $deliveryAddress = DeliveryAddress::find($request->id);
-                $deliveryAddress->city = $request->city;
-                $deliveryAddress->address = $request->address;
-                $deliveryAddress->is_select = $request->is_select;
-                $deliveryAddress->save();
+                $delivery_address = DeliveryAddress::find($request->id);
+
+                if ($request->is_select == 1) {
+                    $delivery_address_list = DeliveryAddress::where('user_id', $delivery_address->user_id)->get();
+                    $delivery_address_list->each(function ($delivery_addresss_item) {
+                        $delivery_addresss_item->is_select = 0;
+                        $delivery_addresss_item->save();
+                    });
+                }
+                // $deliveryAddress->city = $request->city;
+
+                $delivery_address->address = $request->address;
+                $delivery_address->fullname = $request->fullname;
+                $delivery_address->phone_number = $request->phone_number;
+                $delivery_address->is_select = $request->is_select;
+                $delivery_address->save();
 
                 return response()->json([
                     'res' => 'done',
                     'msg' => 'Thành công',
-                    'data' => $deliveryAddress,
+                    'data' => [
+                        'msg' => 'Cập nhật thành công'
+                    ],
                 ]);
             } catch (\Exception $e) {
                 return response()->json([

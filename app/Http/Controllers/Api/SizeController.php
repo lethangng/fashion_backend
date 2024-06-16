@@ -2,35 +2,23 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Brand;
+use App\Models\Size;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class BrandController extends Controller
+class SizeController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        // $brands = Brand::latest()->select(['id', 'name'])->get();
+        $sizes = Size::latest()->select(['id', 'size'])->get();
 
-        // $data = [
-        //     'res' => 'done',
-        //     'msg' => '',
-        //     'data' => $brands,
-        // ];
-
-        // return response()->json($data, 200);
-
-        // $page = $request->page ?? 1;
-        // $limit = $request->limit ?? 6;
-
-        $brands = Brand::latest()->select(['id', 'name'])->get();
         $data = [
             'res' => 'done',
             'msg' => '',
-            'data' => $brands,
+            'data' => $sizes,
         ];
 
         return response()->json($data, 200);

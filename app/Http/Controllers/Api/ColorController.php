@@ -2,35 +2,33 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Brand;
+use App\Models\Color;
+use App\Http\Helper\Helper;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
-class BrandController extends Controller
+class ColorController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index(Request $request)
+    public function index()
     {
-        // $brands = Brand::latest()->select(['id', 'name'])->get();
+        $colors = Color::latest()->select(['id', 'name', 'color'])->get();
 
-        // $data = [
-        //     'res' => 'done',
-        //     'msg' => '',
-        //     'data' => $brands,
-        // ];
+        $colors = $colors->map(function ($color) {
+            $color_value = Helper::convertColor($color->color);
+            return [
+                'id' => $color->id,
+                'name' => $color->name,
+                'color' => $color_value,
+            ];
+        });
 
-        // return response()->json($data, 200);
-
-        // $page = $request->page ?? 1;
-        // $limit = $request->limit ?? 6;
-
-        $brands = Brand::latest()->select(['id', 'name'])->get();
         $data = [
             'res' => 'done',
             'msg' => '',
-            'data' => $brands,
+            'data' => $colors,
         ];
 
         return response()->json($data, 200);

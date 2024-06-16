@@ -37,6 +37,8 @@ class ProductPriceController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
+        $request['price_off'] = $request->price_off ?? 0;
         $validator = Validator::make($request->all(), [
             'price' => 'required',
             'product_id' => 'required',

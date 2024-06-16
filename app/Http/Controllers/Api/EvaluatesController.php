@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\User;
+use App\Models\Order;
 use App\Models\Evaluate;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UploadController;
+use App\Models\OrderProduct;
 
 class EvaluatesController extends Controller
 {
@@ -110,8 +112,8 @@ class EvaluatesController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'user_id' => 'required',
-            'product_id' => 'required',
             'star_number' => 'required',
+            'order_id' => 'required',
             // 'content' => 'required',
         ]);
 
@@ -123,12 +125,28 @@ class EvaluatesController extends Controller
             ]);
         } else {
             try {
-                $request['status'] = 0;
-                $evaluate = Evaluate::create($request->all());
+                $order_products = OrderProduct::where('order_id', $request->order_id)->get();
+                $order_products->each(function ($order_product) use ($request) {
+                    $evaluate = new Evaluate();
+                    $evaluate->product_id = $order_product->product_id;
+                    $evaluate->user_id = $request->user_id;
+                    $evaluate->star_number = $request->star_number;
+                    $evaluate->content = $request->content;
+                    $evaluate->status = 0;
+                    $evaluate->save();
+                });
+
+                $order = Order::find($request->order_id);
+                $order->is_evaluate = 1;
+                $order->save();
+
                 return response()->json([
                     'res' => 'done',
                     'msg' => 'Thành công',
-                    'data' => $evaluate,
+                    // 'data' => $evaluate,
+                    'data' => [
+                        'msg' => 'Đánh giá thành công'
+                    ],
                 ]);
             } catch (\Exception $e) {
                 return response()->json([

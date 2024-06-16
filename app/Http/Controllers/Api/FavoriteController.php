@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Favorite;
 use App\Models\ProductPrice;
@@ -34,13 +35,14 @@ class FavoriteController extends Controller
             $imageUrl = $firebaseStorage->getImage($product->image);
 
             $evaluate = EvaluatesController::countStar($product->id);
+            $brand = Brand::find($product->brand_id)->name;
 
             return [
                 'id' => $product->id,
                 'name' => $product->name,
                 'status' => $product->status,
                 'newest' => $product->newest,
-                'brand' => $product->brand->name,
+                'brand' => $brand,
                 'sell_off' => $productPrice->sell_off,
                 'price_off' => $productPrice->price_off,
                 'price' => $productPrice->price,

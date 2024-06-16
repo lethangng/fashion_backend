@@ -113,14 +113,14 @@ class ProductController extends Controller
                 $request['image'] = $downloadUrl;
 
                 $list_images = [];
-                foreach ($request->list_images_product as $image) {
-                    if (is_file($image)) {
-                        $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
-                        $list_images[] = $downloadUrl;
+                foreach ($request->only('list_images_product') as $images) {
+                    foreach ($images as $image) {
+                        if (is_file($image)) {
+                            $downloadUrl = $firebaseStorage->upload($image, $firebase_storage_path);
+                            $list_images[] = $downloadUrl;
+                        }
                     }
                 }
-                // foreach ($request->only('list_images_product') as $images) {
-                // }
                 $request['list_images'] = json_encode($list_images);
 
                 // return response()->json($request->all());
@@ -130,7 +130,7 @@ class ProductController extends Controller
                     'product_id' => $product->id,
                     'price' => $price,
                     'price_off' => $price_off ?? 0,
-                    'sell_off' => $sell_off ?? 0,
+                    'sell_off' => $sell_off,
                 ]);
 
                 toastr()->success('Thêm sản phẩm thành công!');
@@ -180,7 +180,6 @@ class ProductController extends Controller
         });
 
         // dd($image_url);
-        // dd($list_image_url);
         return view('admin.products.edit', compact('categories', 'brands', 'colors', 'sizes', 'product', 'image_url', 'list_image_url'));
     }
 

@@ -19,7 +19,7 @@ return new class extends Migration
             $table->integer('price_off')->default(0);
             // $table->timestamp('order_date')->nullable()->comment('Ngay dat hang');
             // $table->timestamp('delivery_date')->nullable()->comment('Ngay giao hang');
-            $table->integer('status')->default(0)->comment('Trang thai don hang:  0: mới tiếp nhận, 1: đang xử lý, 2: chuyển qua kho đóng gói, 3: đang giao hàng, 4: hoàn tất');
+            $table->integer('status')->default(0)->comment('Trang thai don hang:  0: mới tiếp nhận, 1: đang xử lý, 2: chuyển qua kho đóng gói, 3: đang giao hàng, 4: hoàn tất, 5: đã hủy,');
             $table->timestamps();
         });
     }

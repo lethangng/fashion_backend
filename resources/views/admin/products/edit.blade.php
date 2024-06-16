@@ -2,7 +2,6 @@
 @section('title', 'Sửa sản phẩm')
 
 @section('css')
-
     <link href="{{ asset('assets') }}/libs/select2/css/select2.min.css" rel="stylesheet" type="text/css" />
     <!-- Plugins css -->
     <link href="{{ asset('assets') }}/libs/dropzone/min/dropzone.min.css" rel="stylesheet" type="text/css" />
@@ -26,6 +25,12 @@
 
         .dz-size {
             display: none;
+        }
+
+        .dz-preview .dz-image img {
+            width: 100% !important;
+            height: 100% !important;
+            object-fit: cover;
         }
     </style>
 @endsection
@@ -60,14 +65,15 @@
             dictFileTooBig: 'Vui lòng chọn hình ảnh dưới 1 MB',
 
             init: function() {
-                var imageUrl = '{!! $image_url !!}';
+                ;
+                var imageUrl = {!! $image_url !!};
                 // console.log(JSON.parse(imageUrl));
                 // imageUrl = JSON.parse(imageUrl);
-                console.log(imageUrl['image_url']);
+                // console.log(imageUrl['image_url']);
                 var mockFile = {
                     name: imageUrl['image_name'],
-                    size: 1024,
-                    type: 'image/*',
+                    // size: 1024,
+                    // type: 'image/*',
                     accepted: true,
                 };
                 this.files.push(mockFile); // add to files array
@@ -76,6 +82,7 @@
                     imageUrl['image_url']
                 );
                 this.emit("complete", mockFile);
+
             }
         });
 
@@ -94,11 +101,15 @@
             dictFileTooBig: 'Vui lòng chọn hình ảnh dưới 1 MB',
 
             init: function() {
+                // this.on("complete", function(file) {
+                //     $(".dz-remove").html(
+                //         "<div class='mt-1'><span class='fa fa-trash text-danger' style='font-size: 1.5em'></span></div>"
+                //     );
+                // });
                 var list_image_url = {!! $list_image_url !!};
 
                 list_image_url.forEach(item => {
                     var mockFile = {
-                        // name: item['image_name'].split('/').pop(),
                         name: item['image_name'],
                         size: 1024,
                         type: 'image/*',
@@ -480,9 +491,9 @@
                                     <label for="example-search-input" class="col-md-2 col-form-label">Tình trạng</label>
                                     <div class="col-md-4">
                                         <select class="form-control select2" name="status">
-                                            <option value="0" @selected($product->status == 0)>Còn hàng
+                                            <option value="1" @selected($product->status == 1)>Còn hàng
                                             </option>
-                                            <option value="1" @selected($product->status == 1)>Hết hàng
+                                            <option value="0" @selected($product->status == 0)>Hết hàng
                                             </option>
                                         </select>
                                     </div>

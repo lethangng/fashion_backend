@@ -16,7 +16,7 @@ class DeliveryAddress extends Model
         'user_id',
         'fullname',
         'phone_number',
-        'city',
+        // 'city',
         'address',
         'is_select',
     ];

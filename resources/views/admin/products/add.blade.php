@@ -463,8 +463,8 @@
                                     <label for="example-search-input" class="col-md-2 col-form-label">Tình trạng</label>
                                     <div class="col-md-4">
                                         <select class="form-control select2" name="status">
-                                            <option value="0">Còn hàng</option>
-                                            <option value="1">Hết hàng</option>
+                                            <option value="1">Còn hàng</option>
+                                            <option value="0">Hết hàng</option>
                                         </select>
                                     </div>
                                 </div>

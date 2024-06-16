@@ -3,8 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Models\User;
+use App\Models\Order;
 use Illuminate\Http\Request;
+use App\Models\DeliveryAddress;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UploadController;
 use Kreait\Laravel\Firebase\Facades\Firebase;
@@ -16,6 +19,48 @@ class UserController extends Controller
     public function __construct()
     {
         $this->auth = Firebase::auth();
+    }
+
+    public function appData(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'u_id' => 'required',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'res' => 'error',
+                'msg' => 'Thất bại',
+                'data' => [],
+            ], 200);
+        }
+
+        try {
+            $user = User::where('u_id', $request->u_id)->first();
+
+            $order = Order::where('user_id', $user->id)->get();
+            $total_order = $order->count();
+
+            $delivery_address = DeliveryAddress::where('user_id', $user->id)->get();
+            $total_delevery_address = $delivery_address->count();
+
+            $data = [
+                'res' => 'done',
+                'msg' => 'Thành công',
+                'data' => [
+                    'total_order' => $total_order,
+                    'total_delevery_address' => $total_delevery_address,
+                ],
+            ];
+
+            return response()->json($data);
+        } catch (\Exception $e) {
+            return response()->json([
+                'res' => 'error',
+                'msg' => '',
+                'data' => $e->getMessage(),
+            ]);
+        }
     }
 
     public function userInfo(Request $request)
@@ -40,7 +85,7 @@ class UserController extends Controller
             ]);
 
             // Kiểm tra xem image lưu trong CSDL có phải là 1 URL không
-            if ($validator->fails()) {
+            if ($validator->fails() && $user->image) {
                 $firebaseStorage = new UploadController();
                 $imageUrl = $firebaseStorage->getImage($user->image);
                 $user['image'] = $imageUrl;
@@ -48,7 +93,7 @@ class UserController extends Controller
 
             $data = [
                 'res' => 'done',
-                'msg' => 'Cập nhập thành công',
+                'msg' => 'Thành công',
                 'data' => $user,
             ];
 
@@ -159,8 +204,9 @@ class UserController extends Controller
     public function changePassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'u_id' => ['required'],
-            'password' => ['required', 'min:6', 'max:30'],
+            'u_id' => 'required',
+            'old_password' => 'required',
+            'new_password' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -171,17 +217,31 @@ class UserController extends Controller
             ]);
         }
         try {
-            $this->auth->changeUserPassword($request->u_id, $request->password);
+            $user = User::where('u_id', $request->u_id)->first();
+            if (!Hash::check($request->old_password, $user->password)) {
+                return response()->json([
+                    'res' => 'error',
+                    'msg' => 'Mật khẩu không đúng',
+                    'data' => [],
+                ]);
+            }
+
+            $this->auth->changeUserPassword($request->u_id, $request->new_password);
+
+            $password = Hash::make($request->new_password);
+            $user->password = $password;
+            $user->save();
+
             return response()->json([
                 'res' => 'done',
-                'msg' => '',
+                'msg' => 'Cập nhật thành công',
                 'data' => [],
             ], 200);
         } catch (\Exception $e) {
             return response()->json([
                 'res' => 'error',
-                'msg' => '',
-                'data' => $e->getMessage(),
+                'msg' => $e->getMessage(),
+                'data' => [],
             ], 200);
         }
     }

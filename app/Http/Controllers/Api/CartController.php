@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Models\Cart;
 use App\Models\Size;
+use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Product;
 use App\Models\ProductPrice;
@@ -46,12 +47,14 @@ class CartController extends Controller
                 return Color::find($color)->only('id', 'name', 'color');
             });
 
+            $brand = Brand::find($product->brand_id)->name;
+
             return [
                 'id' => $cart->id,
                 'product_id' => $product->id,
                 'name' => $product->name,
                 'status' => $product->status,
-                'brand' => $product->brand->name,
+                'brand' => $brand,
                 'sell_off' => $productPrice->sell_off,
                 'price_off' => $productPrice->price_off,
                 'price' => $productPrice->price,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Models\User;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 use Kreait\Laravel\Firebase\Facades\Firebase;
 
@@ -20,9 +21,9 @@ class RegisterController extends Controller
     {
         // return response()->json(substr($request->phone_number, 1));
         $validator = Validator::make($request->all(), [
-            'fullname' => 'required|min:10|max:30',
+            'fullname' => 'required',
             'email' => 'required|email',
-            'password' => 'required|min:6|max:30',
+            'password' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -42,17 +43,19 @@ class RegisterController extends Controller
             $createdUser = $this->auth->createUser($userProperties);
 
             $request['u_id'] = $createdUser->uid;
-            // $password = Hash::make($request->password);
-            // $request['password'] = $password;
+            $password = Hash::make($request->password);
+            $request['password'] = $password;
             $request['role'] = 1;
             $request['login_type'] = "password";
 
-            User::create($request->all());
+            $user =  User::create($request->all());
 
             $data = [
                 'res' => 'done',
                 'msg' => 'Đăng ký thành công',
-                'data' => $request->all(),
+                // 'data' => $request->all(),
+                'data' => $user,
+
             ];
 
             return response()->json($data);
