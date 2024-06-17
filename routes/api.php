@@ -14,6 +14,7 @@ use App\Http\Controllers\Api\CouponController;
 use App\Http\Controllers\Api\ProductController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\FavoriteController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\Api\EvaluatesController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Api\DeliveryAddressController;
@@ -51,6 +52,8 @@ Route::prefix('/user')->group(function () {
 
     Route::post('/app-data', [UserController::class, 'appData']);
 });
+
+Route::post('/send', [NotificationController::class, 'sendMessage']);
 
 // Evaluates
 Route::prefix('/evaluates')->group(function () {

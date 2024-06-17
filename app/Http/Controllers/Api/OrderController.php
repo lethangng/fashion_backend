@@ -2,17 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Models\Cart;
 use App\Models\Size;
+use App\Models\User;
 use App\Models\Brand;
 use App\Models\Color;
 use App\Models\Order;
 use App\Models\Product;
+use App\Http\Helper\Helper;
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UploadController;
-use App\Http\Helper\Helper;
+use App\Http\Controllers\NotificationController;
 
 class OrderController extends Controller
 {
@@ -106,7 +109,6 @@ class OrderController extends Controller
         } else {
             try {
                 // return response()->json($request->all());
-
                 $order = Order::create($request->all());
                 $order_products = $request->order_products;
                 $order_products = json_decode($order_products, true);
@@ -128,13 +130,25 @@ class OrderController extends Controller
                 $order->total_price = $total_price;
                 $order->save();
 
+                Cart::where('user_id', $request->user_id)->delete();
+
+                $user_device_token = User::find($request->user_id)->device_token;
+                // dd($user_device_token);
+                $firebaseStorage = new UploadController();
+
+                if ($user_device_token) {
+                    $order_product = OrderProduct::where('order_id', $order->id)->first();
+                    $product = Product::find($order_product->product_id);
+                    $imageUrl = $firebaseStorage->getImage($product->image);
+
+                    $notify = new NotificationController();
+                    $notify->sendMessage($user_device_token, 'Thông báo', 'Đặt hàng thành công', $imageUrl);
+                }
+
                 return response()->json([
                     'res' => 'done',
                     'msg' => 'Thành công',
-                    // 'data' => $order,
-                    'data' => [
-                        'msg' => 'Đặt hàng thành công',
-                    ]
+                    'data' => $order,
                 ]);
             } catch (\Exception $e) {
                 return response()->json([

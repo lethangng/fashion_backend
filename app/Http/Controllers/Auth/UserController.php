@@ -21,52 +21,53 @@ class UserController extends Controller
         $this->auth = Firebase::auth();
     }
 
-    public function appData(Request $request)
-    {
-        $validator = Validator::make($request->all(), [
-            'u_id' => 'required',
-        ]);
+    // public function appData(Request $request)
+    // {
+    //     $validator = Validator::make($request->all(), [
+    //         'u_id' => 'required',
+    //     ]);
 
-        if ($validator->fails()) {
-            return response()->json([
-                'res' => 'error',
-                'msg' => 'Thất bại',
-                'data' => [],
-            ], 200);
-        }
+    //     if ($validator->fails()) {
+    //         return response()->json([
+    //             'res' => 'error',
+    //             'msg' => 'Thất bại',
+    //             'data' => [],
+    //         ], 200);
+    //     }
 
-        try {
-            $user = User::where('u_id', $request->u_id)->first();
+    //     try {
+    //         $user = User::where('u_id', $request->u_id)->first();
 
-            $order = Order::where('user_id', $user->id)->get();
-            $total_order = $order->count();
+    //         $order = Order::where('user_id', $user->id)->get();
+    //         $total_order = $order->count();
 
-            $delivery_address = DeliveryAddress::where('user_id', $user->id)->get();
-            $total_delevery_address = $delivery_address->count();
+    //         $delivery_address = DeliveryAddress::where('user_id', $user->id)->get();
+    //         $total_delevery_address = $delivery_address->count();
 
-            $data = [
-                'res' => 'done',
-                'msg' => 'Thành công',
-                'data' => [
-                    'total_order' => $total_order,
-                    'total_delevery_address' => $total_delevery_address,
-                ],
-            ];
+    //         $data = [
+    //             'res' => 'done',
+    //             'msg' => 'Thành công',
+    //             'data' => [
+    //                 'total_order' => $total_order,
+    //                 'total_delevery_address' => $total_delevery_address,
+    //             ],
+    //         ];
 
-            return response()->json($data);
-        } catch (\Exception $e) {
-            return response()->json([
-                'res' => 'error',
-                'msg' => '',
-                'data' => $e->getMessage(),
-            ]);
-        }
-    }
+    //         return response()->json($data);
+    //     } catch (\Exception $e) {
+    //         return response()->json([
+    //             'res' => 'error',
+    //             'msg' => '',
+    //             'data' => $e->getMessage(),
+    //         ]);
+    //     }
+    // }
 
     public function userInfo(Request $request)
     {
         $validator = Validator::make($request->all(), [
             'u_id' => 'required',
+            'device_token' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -79,6 +80,12 @@ class UserController extends Controller
 
         try {
             $user = User::where('u_id', $request->u_id)->first();
+
+            // Lấy device_token của máy gửi lên để update vào csdl
+            if ($request->device_token != $user->device_token) {
+                $user->device_token = $request->device_token;
+                $user->save();
+            }
 
             $validator = Validator::make(['image' => $user->image], [
                 'image' => 'url',

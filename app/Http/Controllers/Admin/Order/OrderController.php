@@ -4,7 +4,6 @@ namespace App\Http\Controllers\Admin\Order;
 
 use App\Models\User;
 use App\Models\Order;
-use App\Models\Coupon;
 use App\Models\Product;
 use App\Models\OrderProduct;
 use Illuminate\Http\Request;
@@ -13,6 +12,8 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Validator;
 use App\Http\Controllers\UploadController;
 use Illuminate\Validation\ValidationException;
+use App\Http\Controllers\NotificationController;
+use App\Http\Helper\Helper;
 
 class OrderController extends Controller
 {
@@ -77,11 +78,12 @@ class OrderController extends Controller
             $order = Order::find($id);
             $user = User::find($order->user_id);
 
-            $order_products = OrderProduct::where('order_id', $order->id)->get();
-            $order_products = $order_products->map(function ($order_product) {
-                $product = Product::find($order_product->product_id);
-                $imageUrl = (new UploadController())->getImage($product->image);
+            $firebaseStorage = new UploadController();
 
+            $order_products = OrderProduct::where('order_id', $order->id)->get();
+            $order_products = $order_products->map(function ($order_product) use ($firebaseStorage) {
+                $product = Product::find($order_product->product_id);
+                $imageUrl = $firebaseStorage->getImage($product->image);
 
                 return [
                     'id' => $product->id,
@@ -116,6 +118,22 @@ class OrderController extends Controller
                 $order->status = $request->status;
                 $order->save();
                 // $order->update($request->all());
+
+                $firebaseStorage = new UploadController();
+
+                $user_device_token = User::find($order->user_id)->device_token;
+
+                // dd($imageUrl);
+                if ($user_device_token) {
+                    $order_product = OrderProduct::where('order_id', $id)->first();
+                    $product = Product::find($order_product->product_id);
+                    $imageUrl = $firebaseStorage->getImage($product->image);
+
+                    $message = Helper::statusTitle($request->status);
+
+                    $notify = new NotificationController();
+                    $notify->sendMessage($user_device_token, 'Thông báo', 'Đơn hàng của bạn đã chuyển sang trạng thái ' . $message, $imageUrl);
+                }
 
                 toastr()->success('Cập nhập thành công!');
                 return redirect()->route('order.edit', $request->id);
