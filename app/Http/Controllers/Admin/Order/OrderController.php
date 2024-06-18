@@ -132,7 +132,7 @@ class OrderController extends Controller
                     $message = Helper::statusTitle($request->status);
 
                     $notify = new NotificationController();
-                    $notify->sendMessage($user_device_token, 'Thông báo', 'Đơn hàng của bạn đã chuyển sang trạng thái ' . $message, $imageUrl);
+                    $notify->sendMessage($user_device_token, 'Thông báo', 'Đơn hàng #' . $order->id . ' của bạn đã chuyển sang trạng thái "' . $message . '".', $imageUrl, ['order_id' => $order->id]);
                 }
 
                 toastr()->success('Cập nhập thành công!');

@@ -318,13 +318,13 @@ class UserController extends Controller
     public function resetPassword(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'email' => ['required', 'email'],
+            'email' => 'required',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'res' => 'error',
-                'msg' => 'Cập nhập thất bại',
+                'msg' => 'Lỗi định dạng thất bại',
                 'data' => [],
             ]);
         }
@@ -333,7 +333,7 @@ class UserController extends Controller
             $this->auth->sendPasswordResetLink($request->email);
             return response()->json([
                 'res' => 'done',
-                'msg' => '',
+                'msg' => 'Gửi thành công',
                 'data' => [
                     // 'link' => $link,
                 ],

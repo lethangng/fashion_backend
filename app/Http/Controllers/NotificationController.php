@@ -15,11 +15,14 @@ class NotificationController extends Controller
         $this->messaging = app('firebase.messaging');
     }
 
-    public function sendMessage(string $deviceToken, string $title, string $body, ?string $imageUrl)
+    public function sendMessage(string $deviceToken, string $title, string $body, ?string $imageUrl = null, ?array $payload = [])
     {
         // $deviceToken = $deviceToken ?? '...';
         $notification = Notification::create($title, $body, $imageUrl);
-        $data = ['key' => 'value'];
+        $data = [
+            'image' => $imageUrl,
+            ...$payload,
+        ];
         $message = CloudMessage::withTarget('token', $deviceToken)
             ->withNotification($notification) // optional
             ->withData($data);

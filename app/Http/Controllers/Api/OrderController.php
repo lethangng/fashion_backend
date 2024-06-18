@@ -142,7 +142,7 @@ class OrderController extends Controller
                     $imageUrl = $firebaseStorage->getImage($product->image);
 
                     $notify = new NotificationController();
-                    $notify->sendMessage($user_device_token, 'Thông báo', 'Đặt hàng thành công', $imageUrl);
+                    $notify->sendMessage($user_device_token, 'Thông báo', 'Đặt hàng thành công', $imageUrl, ['order_id' => $order->id]);
                 }
 
                 return response()->json([
