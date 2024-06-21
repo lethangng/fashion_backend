@@ -16,7 +16,8 @@ class CouponController extends Controller
      */
     public function index($page = 1)
     {
-        $coupons = Coupon::latest()->paginate(20, ['*'], 'page', $page);
+        $currentDate = Carbon::now();
+        $coupons = Coupon::latest()->where('expired', '>', $currentDate)->paginate(20, ['*'], 'page', $page);
         $total_pages = $coupons->lastPage();
         $current_page = $coupons->currentPage();
 

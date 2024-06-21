@@ -51,6 +51,7 @@
                                                     'Chuyển qua kho đóng gói',
                                                     'Đang giao hàng',
                                                     'Hoàn tất',
+                                                    'Đã hủy',
                                                 ];
                                             @endphp
                                             @foreach ($status as $item)
@@ -59,7 +60,7 @@
                                                         <input class="form-check-input" type="radio" name="status"
                                                             value="{{ $loop->index }}" id="formCheck{{ $loop->index }}"
                                                             @checked($order->status == $loop->index)>
-                                                        <label class="form-check-label" for="formCheck1">
+                                                        <label class="form-check-label" for="formCheck{{ $loop->index }}">
                                                             {{ $item }}
                                                         </label>
                                                     </div>

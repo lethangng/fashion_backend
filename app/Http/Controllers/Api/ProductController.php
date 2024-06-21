@@ -52,7 +52,7 @@ class ProductController extends Controller
         // $products = new Collection($products);
         $products = $products
             ->map(function ($product) use ($user_id, $firebaseStorage) {
-                $productPrice = ProductPrice::where('product_id', $product->id)->latest()->first();
+                $productPrice = ProductPrice::where('product_id', $product->id)->where('is_select', 1)->first();
 
                 $imageUrl = $firebaseStorage->getImage($product->image);
                 if ($user_id) {
@@ -141,7 +141,7 @@ class ProductController extends Controller
             ];
         });
 
-        $productPrice = ProductPrice::where('product_id', $product->id)->latest()->first();
+        $productPrice = ProductPrice::where('product_id', $product->id)->where('is_select', 1)->first();
 
         $evaluate = EvaluatesController::countStar($product->id);
 
@@ -222,8 +222,9 @@ class ProductController extends Controller
             ->where('product_prices.is_select', 1)
             ->where('name', 'like', '%' . $product_name . '%');
 
+        // dd($min_price);
 
-        if ($min_price && $max_price) {
+        if (isset($min_price) && isset($max_price)) {
             $query->whereBetween('price', [$min_price, $max_price]);
         }
 
@@ -322,7 +323,7 @@ class ProductController extends Controller
 
         $recommendations = $recommendations
             ->map(function ($product) use ($user_id, $firebaseStorage) {
-                $productPrice = ProductPrice::where('product_id', $product->id)->latest()->first();
+                $productPrice = ProductPrice::where('product_id', $product->id)->where('is_select', 1)->first();
 
                 $imageUrl = $firebaseStorage->getImage($product->image);
 

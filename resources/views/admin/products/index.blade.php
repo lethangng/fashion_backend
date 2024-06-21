@@ -199,6 +199,7 @@
                                                 <th class="align-middle">Tên sản phẩm</th>
                                                 <th class="align-middle">Danh mục</th>
                                                 <th class="align-middle">Giá nhập</th>
+                                                <th class="align-middle">Giá bán</th>
                                                 <th class="text-center">Quản lý giá</th>
                                                 <th class="text-center">Sửa</th>
                                                 <th class="text-center">Xóa</th>
@@ -226,6 +227,9 @@
                                                     <td>
                                                         {{ $product['import_price'] }}
                                                     </td>
+                                                    <td>
+                                                        {{ $product['product_price'] }}
+                                                    </td>
                                                     <td class="text-center">
                                                         <a class="btn btn-info btn-sm"
                                                             href="{{ route('product_price.index', ['product_id' => $product['id'], 'page' => 1]) }}">
@@ -243,7 +247,8 @@
 
                                                     <form action="{{ route('product.delete') }}" method="POST">
                                                         @csrf
-                                                        <input type="hidden" name="id" value="{{ $product['id'] }}">
+                                                        <input type="hidden" name="id"
+                                                            value="{{ $product['id'] }}">
 
                                                         <td class="text-center">
                                                             <button type="button" class="btn btn-danger btn-sm"

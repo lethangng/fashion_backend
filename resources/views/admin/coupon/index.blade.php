@@ -189,6 +189,7 @@
                                                 <th class="align-middle">Mã code</th>
                                                 <th class="align-middle">Giá trị giảm</th>
                                                 <th class="align-middle">Giảm giá cho đơn hàng từ</th>
+                                                <th class="align-middle">Thể loại</th>
                                                 <th class="align-middle">Mô tả</th>
                                                 <th class="text-center">Sửa</th>
                                                 <th class="text-center">Xóa</th>
@@ -216,6 +217,9 @@
                                                     </td>
                                                     <td>
                                                         {{ $coupon->for_sum }}
+                                                    </td>
+                                                    <td>
+                                                        {{ $coupon->coupon_type == 0 ? 'Giá trị' : 'Phần trăm' }}
                                                     </td>
                                                     <td>
                                                         {{ $coupon->description }}

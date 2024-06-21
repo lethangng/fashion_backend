@@ -32,6 +32,7 @@ class ProductController extends Controller
         $products = $products->map(function ($product) {
             $categoryName = CategoryController::getCategoryById($product->category_id)->name;
             $imageUrl = (new UploadController())->getImage($product->image);
+            $productPrice = ProductPrice::where('product_id', $product->id)->where('is_select', 1)->first()->price;
             // dd($product);
 
             return [
@@ -40,6 +41,7 @@ class ProductController extends Controller
                 'import_price' => $product->import_price,
                 'category_name' => $categoryName,
                 'image_url' => $imageUrl,
+                'product_price' => $productPrice,
             ];
         });
 

@@ -50,12 +50,23 @@ class ProductPriceController extends Controller
             throw new ValidationException($validator);
         } else {
             try {
+                $product_price_last = ProductPrice::where('product_id', $request->product_id)->latest()->first();
+                $product_price_last->is_select = 0;
+                $product_price_last->save();
+
+                if ($request->price_off != 0) {
+                    $percent_price = ($request->price_off - $request->price) / $request->price * 100;
+                    $request['sell_off'] = '-' . ceil($percent_price) . '%';
+                }
+
+                $request['is_select'] = 1;
                 ProductPrice::create($request->all());
                 toastr()->success('Thêm giá mới thành công!');
 
                 return redirect()->route('product_price.index', ['product_id' => $request->product_id, 'page' => 1]);
             } catch (\Exception $e) {
                 toastr()->error('Thêm giá mới thất bại.');
+                // dd($e);
                 return back();
             }
         }
@@ -92,8 +103,15 @@ class ProductPriceController extends Controller
             'id' => 'required',
             'price' => 'required',
         ]);
+        $request['price_off'] = $request->price_off ?? 0;
 
         $product_price = ProductPrice::find($request->id);
+
+        if ($request->price_off != 0) {
+            $percent_price = ($request->price_off - $request->price) / $request->price * 100;
+            $request['sell_off'] = '-' . ceil($percent_price) . '%';
+        }
+
         $product_price->update($request->all());
 
         toastr()->success('Sửa thành công!');
@@ -108,6 +126,11 @@ class ProductPriceController extends Controller
         if (request()->ajax()) {
             $ids = $request->id;
             ProductPrice::whereIn('id', $ids)->delete();
+
+            $product_price_last = ProductPrice::where('product_id', $request->product_id)->latest()->first();
+            $product_price_last->is_select = 0;
+            $product_price_last->save();
+
             toastr()->success('Xóa thành công!');
             return response()->json($request->id);
         }
@@ -124,6 +147,12 @@ class ProductPriceController extends Controller
             $product_price = ProductPrice::find($request->id);
 
             $result = $product_price->delete();
+
+            // Cập lại is_select cho product_price
+            $product_price_last = ProductPrice::where('product_id', $request->product_id)->latest()->first();
+            $product_price_last->is_select = 0;
+            $product_price_last->save();
+
             if (is_bool($result)) {
                 toastr()->success('Xóa thành công!');
             } else {

@@ -43,7 +43,7 @@
                                         @enderror
                                     </div>
                                 </div>
-                                <div class="mb-3 row">
+                                {{-- <div class="mb-3 row">
                                     <label for="example-text-input" class="col-md-2 col-form-label">Tiết kiệm</label>
                                     <div class="col-md-10">
                                         <input class="form-control" type="text" placeholder="Nhập tiết kiệm"
@@ -52,7 +52,7 @@
                                             <div class="error">{{ $message }}</div>
                                         @enderror
                                     </div>
-                                </div>
+                                </div> --}}
 
 
                                 <div class="row">

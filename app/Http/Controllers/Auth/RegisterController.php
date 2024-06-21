@@ -97,6 +97,7 @@ class RegisterController extends Controller
                 ];
                 return response()->json($data);
             } else {
+                $request['role'] = 0;
                 User::create($request->all());
 
                 $data = [
@@ -108,7 +109,11 @@ class RegisterController extends Controller
                 return response()->json($data);
             }
         } catch (\Exception $e) {
-            return response()->json($e->getMessage());
+            return response()->json([
+                'res' => 'error',
+                'msg' => $e->getMessage(),
+                'data' => [],
+            ]);
         }
     }
 }
