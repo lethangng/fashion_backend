@@ -5,10 +5,16 @@ services:
       dockerfile: Dockerfile
     container_name: laravel_app
     platform: linux/arm64
-    ports:
-      - "8080:80"
+    restart: unless-stopped
+    expose:
+      - 9000
+    depends_on:
+      - db
+    env_file:
+      - ./backend/.env
     volumes:
-      - ./:/app
+      - storage:/app/storage:rw
+      - public:/app/public:rw
     environment:
       APP_NAME: FashionApp
       APP_URL: http://fashion-lt.id.vn/
@@ -34,23 +40,46 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: /app/firebase-auth.json
     # depends_on:
     #   - db
-    networks:
-      - laravel
 
-  db:
-    image: postgres:15
-    container_name: laravel_db
-    restart: always
-    environment:
-      POSTGRES_DB: laravel 
-      POSTGRES_USER: laravel
-      POSTGRES_PASSWORD: secret
+  queue-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    command: php artisan queue:work --tries=3
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - redis
     volumes:
-      - db_data:/var/lib/postgresql/data 
+      - storage:/app/storage:rw
+      - public:/app/public:rw
+  
+  nginx:
+    image: nginx:1.25-alpine
     ports:
-      - "5432:5432"
-    networks:
-      - laravel
+      - 80:80
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - storage:/app/storage:rw
+      - public:/app/public:ro
+    depends_on:
+        - app
+
+  # db:
+  #   image: postgres:15
+  #   container_name: laravel_db
+  #   restart: always
+  #   environment:
+  #     POSTGRES_DB: laravel 
+  #     POSTGRES_USER: laravel
+  #     POSTGRES_PASSWORD: secret
+  #   volumes:
+  #     - db_data:/var/lib/postgresql/data 
+  #   ports:
+  #     - "5432:5432"
+  #   networks:
+  #     - laravel
 
   # redis:
   #   image: redis:alpine
@@ -60,8 +89,14 @@ services:
   #   networks:
   #     - laravel
 
-volumes:
-  db_data:
+# volumes:
+#   db_data:
 
-networks:
-  laravel:
+# networks:
+#   laravel:
+
+volumes:
+  storage:
+  public:
+  db-data:
+  # redis-data:
