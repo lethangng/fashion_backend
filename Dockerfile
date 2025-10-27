@@ -51,6 +51,9 @@ WORKDIR /app
 ENV WEB_DOCUMENT_ROOT=/app/public
 EXPOSE 80
 
+# Copy cấu hình nginx tuỳ chỉnh
+COPY nginx.conf /opt/docker/etc/nginx/vhost.conf
+
 # Cài extension nếu cần
 # RUN docker-php-ext-install pdo_mysql bcmath
 
