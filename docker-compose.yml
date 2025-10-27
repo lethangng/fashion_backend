@@ -11,7 +11,7 @@ services:
     depends_on:
       - db
     env_file:
-      - ./backend/.env
+      - .env
     volumes:
       - storage:/app/storage:rw
       - public:/app/public:rw

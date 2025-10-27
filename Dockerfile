@@ -1,15 +1,15 @@
-# # ---------- Stage 1: Build assets (Vite) ----------
-# FROM node:18-alpine AS assets
-# WORKDIR /app
+# ---------- Stage 1: Build assets (Vite) ----------
+FROM node:18-alpine AS assets
+WORKDIR /app
 
-# # Copy file cần thiết cho npm install
-# COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
-# RUN npm ci
+# Copy file cần thiết cho npm install
+COPY package.json package-lock.json* yarn.lock* pnpm-lock.yaml* ./
+RUN npm ci
 
-# # Copy source để build Vite
-# COPY vite.config.* ./
-# COPY resources ./resources
-# RUN npm run build
+# Copy source để build Vite
+COPY vite.config.* ./
+COPY resources ./resources
+RUN npm run build
 
 
 # # ---------- Stage 2: Composer (vendor) ----------
@@ -74,7 +74,7 @@ FROM php:8.3.11-fpm
 
 # Cài dependency
 RUN apt-get update && apt-get install -y \
-    libzip-dev libpng-dev postgresql-client libpq-dev \
+    libzip-dev libpng-dev libpq-dev \
     nodejs npm git unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
@@ -83,7 +83,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
 # PHP Extensions
-RUN docker-php-ext-install pdo pgsql pdo_pgsql gd bcmath zip \
+RUN docker-php-ext-install pdo gd bcmath zip \
     && pecl install redis \
     && docker-php-ext-enable redis
 
@@ -101,6 +101,10 @@ RUN composer install --no-dev --optimize-autoloader --no-interaction \
 
 # Port cho Render
 EXPOSE 80
+
+# 👉 Copy các file CSS/JS đã build từ Stage 1
+COPY --from=assets /app/public/build ./public/build
+
 
 # Start app (Render cần port 80)
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=80"]
