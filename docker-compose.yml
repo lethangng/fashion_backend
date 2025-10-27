@@ -1,0 +1,67 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    platform: linux/arm64
+    ports:
+      - "8080:80"
+    volumes:
+      - ./:/app
+    environment:
+      APP_NAME: FashionApp
+      APP_URL: http://fashion-lt.id.vn/
+      APP_DEBUG: "true"
+      DB_CONNECTION: ${DB_CONNECTION}
+      APP_KEY: ${APP_KEY}
+      APP_ENV: ${APP_ENV}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: ${DB_PORT}
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USERNAME: ${DB_USERNAME}
+      DB_PASSWORD: ${DB_PASSWORD}
+
+      # JWT Configurations
+      JWT_SECRET: ${JWT_SECRET}
+      JWT_TTL: ${JWT_TTL}
+      JWT_REFRESH_TTL: ${JWT_REFRESH_TTL}
+
+      # Firebase & Google Cloud
+      FIREBASE_CREDENTIALS: /app/firebase-auth.json
+      FIREBASE_PROJECT_ID: ${FIREBASE_PROJECT_ID}
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT}
+      GOOGLE_APPLICATION_CREDENTIALS: /app/firebase-auth.json
+    # depends_on:
+    #   - db
+    networks:
+      - laravel
+
+  db:
+    image: postgres:15
+    container_name: laravel_db
+    restart: always
+    environment:
+      POSTGRES_DB: laravel 
+      POSTGRES_USER: laravel
+      POSTGRES_PASSWORD: secret
+    volumes:
+      - db_data:/var/lib/postgresql/data 
+    ports:
+      - "5432:5432"
+    networks:
+      - laravel
+
+  # redis:
+  #   image: redis:alpine
+  #   container_name: laravel_redis
+  #   ports:
+  #     - "6379:6379"
+  #   networks:
+  #     - laravel
+
+volumes:
+  db_data:
+
+networks:
+  laravel:
